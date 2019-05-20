@@ -4,18 +4,25 @@
 #include <iostream>
 #include <unistd.h>
 
-void sigtrapHandler(int /*sigNum*/)
+void sigtrapHandler(int /* sigNum */)
 {
-	std::cout << "A_DebugBreak succesfully raised a SIGTRAP !\n";
+	std::cout << "A_DebugBreak successfully raised a SIGTRAP !\n";
+	std::quick_exit(0);
+}
+
+void sigabrtHandler(int /* sigNum */)
+{
+	std::cout << "A_DebugBreak successfully raised a SIGABRT !\n";
 	std::quick_exit(0);
 }
 
 int main()
 {
 	signal(SIGTRAP, sigtrapHandler);
+	signal(SIGABRT, sigabrtHandler);
 	A_DebugBreak();	// Should emit a SIGTRAP
 
-	std::cout << "ERROR : A_DebugBreak did not SIGTRAP !\n";
+	std::cout << "ERROR : A_DebugBreak did not raise SIGTRAP or SIGABRT !\n";
 
 	return 1;
 }

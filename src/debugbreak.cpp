@@ -4,8 +4,12 @@
 extern "C" void A_DebugBreak()
 {
 #if defined(__x86_64__) || defined(__i386__)
-	__asm__ volatile("int $0x3; nop");
+	__asm__ volatile("int $0x3; nop");	// Portable amongst x86 gcc-compliant compliant
 #else
-	raise(SIGTRAP);	// Should be a portable equivalent (is at least the same on Linux)
+#ifdef SIGTRAP
+	raise(SIGTRAP);	// Portable across POSIX
+#else
+	raise(SIGABRT);	// Portable
+#endif
 #endif
 }

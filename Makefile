@@ -45,27 +45,27 @@ CXXFLAGS += -Wall -Wextra
 CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
-SOURCES = cachesize cputype
-TESTS = testDataCacheSize
+SOURCES = cachesize cputype debugbreak round cpuid
+TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
-DEPENDENCIES := $(addsuffix .d, $(OBJECTS))
+BINARIES_TESTS = $(addprefix $(TESTS_FOLDER)/$(BINARY_FOLDER)/, $(TESTS))
 DEPENDENCIES = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o.d, $(SOURCES)))
-DEPENDENCIES_SHARED := $(addsuffix .d, $(OBJECTS_SHARED))
 DEPENDENCIES_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o.d, $(SOURCES)))
+DEPENDENCIES_TESTS = $(addprefix $(TESTS_FOLDER)/$(OBJECT_FOLDER)/, $(addsuffix .o.d, $(TESTS)))
 
 # Main target are the .a library file and the shared .so file
 all: $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME) $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME) tests
 	@echo Build finished without errors !
 
-tests: $(TESTS_FOLDER)/$(BINARY_FOLDER)/$(TESTS)
+tests: $(BINARIES_TESTS)
 
 $(TESTS_FOLDER)/$(BINARY_FOLDER)/%: $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME)
 	@mkdir -p $(@D)
 	@echo Making binary $@ for testing...
 	@$(CXX) $(CXXFLAGS) -o $@ $< -L$(LIBRARY_FOLDER) -l$(LIBRARY_BASENAME)
-	@echo Executing $@ test binary...
+	@echo Executing $@...
 	@./$@
 	@echo Test $@ succeeded !
 
@@ -99,6 +99,7 @@ $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/%.o: $(SOURCE_FOLDER)/%.cpp
 # Include dependencies
 include $(wildcard $(DEPENDENCIES))
 include $(wildcard $(DEPENDENCIES_SHARED))
+include $(wildcard $(DEPENDENCIES_TESTS))
 
 clean:
 	@rm -rf $(LIBRARY_FOLDER) $(OBJECT_FOLDER) $(TESTS_FOLDER)/$(OBJECT_FOLDER) $(TESTS_FOLDER)/$(BINARY_FOLDER)

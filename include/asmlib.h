@@ -25,7 +25,7 @@
 
 // Define type size_t
 #ifndef _SIZE_T_DEFINED
-#include <stddef.h">
+#include <stddef.h>
 #endif
 
 // Define integer types with known size: int32_t, uint32_t, int64_t, uint64_t.

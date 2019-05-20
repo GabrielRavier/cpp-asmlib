@@ -3,14 +3,15 @@
 # Makefile for asmlib function library, g++ version
 
 # Folder names
-OBJECT_FOLDER = obj
-LIBRARY_FOLDER = lib
-INCLUDE_FOLDER = include
-SOURCE_FOLDER = src
-TESTS_FOLDER = tests
+BINARY_FOLDER ?= bin
+OBJECT_FOLDER ?= obj
+LIBRARY_FOLDER ?= lib
+INCLUDE_FOLDER ?= include
+SOURCE_FOLDER ?= src
+TESTS_FOLDER ?= tests
 
 # Tool names
-AR = ar
+AR ?= ar
 
 ifeq ($(RELEASE), 1)
 	# Optimization flags
@@ -19,19 +20,18 @@ ifeq ($(RELEASE), 1)
 	# -s : Strip output file
 	CXXFLAGS = -O3 -flto -s
 	LDFLAGS = -s
-	STATIC_LIBRARY_NAME_DEF = libasmlib.a
-	SHARED_LIBRARY_NAME_DEF = shared/libasmlib.so
+	LIBRARY_BASENAME_DEF = asmlib
 else
 	# Debug flags
 	# -Og : Optimize for debugging
 	# -g3 : Maximum amount of debugging information
 	CXXFLAGS = -Og -g3
-	STATIC_LIBRARY_NAME_DEF = libasmlibdebug.a
-	SHARED_LIBRARY_NAME_DEF = shared/libasmlibdebug.so
+	LIBRARY_BASENAME_DEF = asmlibdebug
 endif
 
-STATIC_LIBRARY_NAME ?= $(STATIC_LIBRARY_NAME_DEF)
-SHARED_LIBRARY_NAME ?= $(SHARED_LIBRARY_NAME_DEF)
+LIBRARY_BASENAME ?= $(LIBRARY_BASENAME_DEF)
+STATIC_LIBRARY_NAME = lib$(LIBRARY_BASENAME).a
+SHARED_LIBRARY_NAME = shared/lib$(LIBRARY_BASENAME).so
 
 # Warnings
 # -Wall : Common warnings
@@ -46,6 +46,7 @@ CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
 SOURCES = cachesize cputype
+TESTS = testDataCacheSize
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
@@ -58,8 +59,15 @@ DEPENDENCIES_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(ad
 all: $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME) $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME) tests
 	@echo Build finished without errors !
 
-# Does nothing for now
-tests:
+tests: $(TESTS_FOLDER)/$(BINARY_FOLDER)/$(TESTS)
+
+$(TESTS_FOLDER)/$(BINARY_FOLDER)/%: $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME)
+	@mkdir -p $(@D)
+	@echo Making binary $@ for testing...
+	@$(CXX) $(CXXFLAGS) -o $@ $< -L$(LIBRARY_FOLDER) -l$(LIBRARY_BASENAME)
+	@echo Executing $@ test binary...
+	@./$@
+	@echo Test $@ succeeded !
 
 $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME): $(OBJECTS)
 	@mkdir -p $(@D)
@@ -72,6 +80,11 @@ $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME): $(OBJECTS_SHARED)
 	@echo Linking shared library $@...
 	@$(CXX) $(CXXFLAGS) -shared $^ -o $@
 	@echo Linked $@ !
+
+$(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o: $(TESTS_FOLDER)/%.cpp
+	@mkdir -p $(@D)
+	@echo Compiling $<...
+	@$(CXX) $(CXXFLAGS) $< -o $@ -c
 
 $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/%.o: $(SOURCE_FOLDER)/%.cpp
 	@mkdir -p $(@D)
@@ -88,4 +101,4 @@ include $(wildcard $(DEPENDENCIES))
 include $(wildcard $(DEPENDENCIES_SHARED))
 
 clean:
-	@rm -rf $(LIBRARY_FOLDER) $(OBJECT_FOLDER)
+	@rm -rf $(LIBRARY_FOLDER) $(OBJECT_FOLDER) $(TESTS_FOLDER)/$(OBJECT_FOLDER) $(TESTS_FOLDER)/$(BINARY_FOLDER)

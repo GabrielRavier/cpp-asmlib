@@ -44,15 +44,15 @@ extern "C" void CpuType(int *pVendor, int *pFamily, int *pModel)
 	// Get vendor
 	// ecx : Last 4 characters of vendor string
 	// ebx : First 4 characters of vendor string
-	if (ecx == 0x6E74656C)	// 'ntel' ('GenuineIntel')
+	if (ecx == 0x6C65746E)	// 'ntel' ('GenuineIntel')
 		vendor |= 1;
-	else if (ecx == 0x63414D44)	// 'cAMD' ('AuthenticAMD')
+	else if (ecx == 0x444D4163)	// 'cAMD' ('AuthenticAMD')
 		vendor |= 2;
-	else if (ebx == 0x43656E74 || ebx == 0x56494120)	// 'Cent' ('CentaurHauls'), 'VIA ' ('VIA VIA VIA ')
+	else if (ebx == 0x746E6543 || ebx == 0x20414956)	// 'Cent' ('CentaurHauls'), 'VIA ' ('VIA VIA VIA ')
 		vendor |= 3;
-	else if (ebx == 0x43797269)	// 'Cyri' ('CyrixInstead')
+	else if (ebx == 0x69727943)	// 'Cyri' ('CyrixInstead')
 		vendor |= 4;
-	else if (ebx == 0x4E657847)	// 'NexG' ('NexGenDriven')
+	else if (ebx == 0x4778654E)	// 'NexG' ('NexGenDriven')
 		vendor |= 5;
 
 	// Other, do nothing

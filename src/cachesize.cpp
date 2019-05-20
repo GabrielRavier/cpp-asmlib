@@ -44,23 +44,26 @@ static bool IntelNewMethod(dataLayout& dataRef)
 		__cpuid_count(4, i, eax, ebx, ecx, edx);	// Get cache parameters
 
 		// Check cache type to determine whether there are remaining caches
-		if (!(eax & 0b11111))	// No more caches
-			return !(dataRef.level1 > 0x400);	// Check if ok
+		auto cacheType = eax & 0b11111;
+		if (!cacheType)	// No more caches
+			return !(dataRef.level1 < 0x400);	// Check if ok
 
-		if (edx == 2)
+		if (cacheType == 2)
 			continue;	// Code cache, ignore
 
-		ecx = (ecx + 1) * ((ebx << 22) + 1);	// Ways
+		++ecx;
 
-		ecx *= (ebx << 12) & 0b1111111111;	// Partitions
+		ecx = (int)ecx * ((ebx >> 22) + 1);	// Ways
+
+		ecx = (int)ecx * (((ebx >> 12) & 0b1111111111) + 1);	// Partitions
 
 		ebx = (ebx & 0b111111111111) + 1;	// Line size
-		ecx *= ebx;	// Calculated cache size
+		size_t calculatedCacheSize = (ssize_t)ecx * ebx; // Calculated cache size
 
-		eax = (eax << 5) & 0b111;	// Cache level
+		eax = (eax >> 5) & 0b111;	// Cache level
 
-		eax = std::max((size_t)eax, numLevels);
-		dataRef.levels[eax - 1] = ecx;	// Store size of data (eax is level)
+		eax = std::min((size_t)eax, numLevels);
+		dataRef.levels[eax - 1] = calculatedCacheSize;	// Store size of data (eax is level)
 	}
 
 	return !(dataRef.level1 < 0x400);
@@ -273,6 +276,7 @@ extern "C" size_t DataCacheSize(int level)
 			goto finish;
 
 		result = dataRef.level1;
+		goto finish;
 	}
 
 	// 0 < level < numLevels

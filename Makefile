@@ -58,6 +58,9 @@ DEPENDENCIES_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(ad
 all: $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME) $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME) tests
 	@echo Build finished without errors !
 
+# Does nothing for now
+tests:
+
 $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME): $(OBJECTS)
 	@mkdir -p $(@D)
 	@echo Making archive $@...
@@ -67,7 +70,7 @@ $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME): $(OBJECTS)
 $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME): $(OBJECTS_SHARED)
 	@mkdir -p $(@D)
 	@echo Linking shared library $@...
-	@$(CXX) $(CXXFLAGS) -shared $< -o $@
+	@$(CXX) $(CXXFLAGS) -shared $^ -o $@
 	@echo Linked $@ !
 
 $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/%.o: $(SOURCE_FOLDER)/%.cpp

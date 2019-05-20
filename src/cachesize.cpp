@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <algorithm>
 #include <cpuid.h>
 #include "asmlib.h"
 
@@ -10,7 +11,7 @@ struct descriptorRecord	// Record for table of cache descriptors
 	uint8_t level;	// Cache level
 	uint8_t sizeMultiplier;	// Size multiplier
 	uint8_t pow2;	// Power of 2, size = sizeMultiplier << pow2
-}
+};
 
 struct dataLayout	// Reference point
 {
@@ -19,74 +20,50 @@ struct dataLayout	// Reference point
 	{
 		struct
 		{
-			int level1;	// Level 1 data cache size
-			int level2;	// Level 2 data cache size
-			int level3;	// Level 3 data cache size
-			int level4;	// Level 4 data cache size
+			size_t level1;	// Level 1 data cache size
+			size_t level2;	// Level 2 data cache size
+			size_t level3;	// Level 3 data cache size
+			size_t level4;	// Level 4 data cache size
 		};
-		int levels[4];
+		size_t levels[4];
 	};
 	descriptorRecord descriptorTable[61];
 };
 
-constexpr int numLevels = 4;	// Max level
+constexpr size_t numLevels = 4;	// Max level
 
 static bool IntelNewMethod(dataLayout& dataRef)
 {
-	uint32_t eax, ebx, ecx, edx, ebp;
+	uint32_t eax, ebx, ecx, edx;
 	__cpuid(0, eax, ebx, ecx, edx);	// Get number of CPUID functions
 	if (eax < 4)
 		return false;	// Fail
 
-	ebp = 0;	// Loop counter
+	for (size_t i = 0; i < 0x100; ++i)
+	{
+		__cpuid_count(4, i, eax, ebx, ecx, edx);	// Get cache parameters
 
-I100:
-	__cpuid_count(4, ebp, eax, ebx, ecx, edx, ebp);	// Get cache parameters
+		// Check cache type to determine whether there are remaining caches
+		if (!(eax & 0b11111))	// No more caches
+			return !(dataRef.level1 > 0x400);	// Check if ok
 
-	edx = eax;
-	edx &= 0b11111;	// Cache type
-	if (!edx)
-		goto I500;	// No more caches
+		if (edx == 2)
+			continue;	// Code cache, ignore
 
-	if (edx == 2)
-		goto I200;	// Code cache, ignore
+		ecx = (ecx + 1) * ((ebx << 22) + 1);	// Ways
 
-	++ecx;
-	edx = ebx;
-	edx <<= 22;
-	++edx;	// Ways
-	ecx = (int)ecx * edx;
+		ecx *= (ebx << 12) & 0b1111111111;	// Partitions
 
-	edx = ebx;
-	edx <<= 12;
-	edx &= 0b1111111111;
-	++edx;	// Partitions
-	ecx = (int)ecx * edx;
+		ebx = (ebx & 0b111111111111) + 1;	// Line size
+		ecx *= ebx;	// Calculated cache size
 
-	ebx &= 0b111111111111;
-	++ebx;	// Line size
-	ecx = (int)ecx * ebx;	// Calculated cache size
+		eax = (eax << 5) & 0b111;	// Cache level
 
-	eax <<= 5;
-	eax &= 0b111;	// Cache level
+		eax = std::max((size_t)eax, numLevels);
+		dataRef.levels[eax - 1] = ecx;	// Store size of data (eax is level)
+	}
 
-	if (!(eax > numLevels))
-		goto I180;
-
-	eax = numLevels;	// Limit higher levels
-
-I180:
-	dataRef.levels[eax - 1] = ecx;	// Store size of data (eax is level)
-
-I200:
-	++ebp;
-	if (ebp < 0x100)	// Avoid infinite loop
-		goto I100;	// Next cache
-
-I500:	// Loop finished
-	// Check if OK
-	eax = dataRef.level1;
-	return !(eax > 0x400);
+	return !(dataRef.level1 < 0x400);
 }
 
 static bool IntelOldMethod(dataLayout& dataRef)
@@ -100,61 +77,47 @@ static bool IntelOldMethod(dataLayout& dataRef)
 	__cpuid_count(2, 0, eax, ebx, ecx, edx);	// Get 16 descriptor bytes in eax, ebx, ecx, edx
 
 	// Save all descriptors
-	uint8_t descriptors[16] =
+	union
 	{
-		0,	// al does not contain a descriptor
-		(uint8_t)((eax >> 8) & 0xFF),
-		(uint8_t)((eax >> 16) & 0xFF),
-		(uint8_t)((eax >> 24) & 0xFF),
-		(uint8_t)((ebx) & 0xFF),
-		(uint8_t)((ebx >> 8) & 0xFF),
-		(uint8_t)((ebx >> 16) & 0xFF),
-		(uint8_t)((ebx >> 24) & 0xFF),
-		(uint8_t)((ecx) & 0xFF),
-		(uint8_t)((ecx >> 8) & 0xFF),
-		(uint8_t)((ecx >> 16) & 0xFF),
-		(uint8_t)((ecx >> 24) & 0xFF),
-		(uint8_t)((edx) & 0xFF),
-		(uint8_t)((edx >> 8) & 0xFF),
-		(uint8_t)((edx >> 16) & 0xFF),
-		(uint8_t)((edx >> 24) & 0xFF),
+		uint32_t descriptors32[4];
+		uint8_t descriptors[16];
 	};
-
-	edx = 15;	// Loop counter
+	eax = (eax >> 8) << 8;	// Clear lowest 8 bytes (al does not contain a descriptor)
+	descriptors32[0] = eax;
+	descriptors32[1] = ebx;
+	descriptors32[2] = ecx;
+	descriptors32[3] = edx;
 
 	// Loop to read 16 descriptor bytes
-J100:
-	uint8_t al = descriptors[edx];
-	ebx = (sizeof(dataRef.descriptorTable) / sizeof(dataRef.descriptorTable[0])) - 1;
+	for (uint32_t i = 15; i--; )
+	{
+		auto currentDescriptor = descriptors[i];
+		constexpr auto descriptorTblCnt = (sizeof(dataRef.descriptorTable) / sizeof(dataRef.descriptorTable[0]));
 
-	// Loop to search in descriptor table
-J200:
-	if (al != dataRef.descriptorTable[ebx].key)
-		goto J300;
+		// Search in descriptor table
+		auto begin = &dataRef.descriptorTable[0];
+		auto end = dataRef.descriptorTable + descriptorTblCnt;
+		auto descriptor = std::find_if(begin, end,
+		[&currentDescriptor] (descriptorRecord& record)
+		{
+			return record.key == currentDescriptor;
+		});
 
-	// Descriptor found
-	eax = dataRef.descriptorTable[ebx].sizeMultiplier;
+		if (descriptor == end)
+			continue;	// Descriptor not found
 
-	uint8_t cl = dataRef.descriptorTable[ebx].pow2;
-	eax <<= cl;	// Compute size
+		// Descriptor found
+		size_t cacheSize = descriptor->sizeMultiplier;
+		cacheSize <<= descriptor->pow2;
 
-	ecx = dataRef.descriptorTable[ebx].level;
-
-	// Check that level = 1-3
-	if (ecx > 3)
-		goto J300;
-
-	dataRef.levels[ecx - 1] = eax;	// Store size (eax) of data cache level (ecx)
-
-J300:
-	if (ebx--)
-		goto J200;	// Inner loop
-
-	if (edx--)
-		goto J100;	// Outer loop
+		auto tmpLvl = descriptor->level;
+		if (tmpLvl > 3)
+			continue;
+		dataRef.levels[tmpLvl - 1] = cacheSize;
+	}
 
 	// Check if OK
-	return !(dataRef.level1 > 1024);
+	return !(dataRef.level1 < 0x400);
 }
 
 static bool AMDMethod(dataLayout& dataRef)
@@ -166,23 +129,18 @@ static bool AMDMethod(dataLayout& dataRef)
 		return false;	// Fail
 
 	__cpuid(0x80000005, eax, ebx, ecx, edx);	// Get L1 cache size
-	ecx >>= 24;	// L1 data cache size in kb
-	ecx <<= 10;	// L1 data cache size in bytes
-	dataRef.level1 = ecx;	// Store L1 data cache size
+	auto l1DataCacheSize = (ecx >> 24) << 10; // L1 data cache size in bytes
+	dataRef.level1 = l1DataCacheSize;	// Store L1 data cache size
 
 	__cpuid(0x80000006, eax, ebx, ecx, edx);	// Get L2 and L3 cache sizes
-	ecx >>= 16;	// L2 data cache size in kb
-	ecx <<= 10;	// L2 data cache size in bytes
-	dataRef.level2 = ecx;	// Store L2 data cache size
+	auto l2DataCacheSize = (ecx >> 16) << 10; // L2 data cache size in bytes
+	dataRef.level2 = l2DataCacheSize;	// Store L2 data cache size
 
-	ecx = edx;
-	ecx >>= 18;	// L3 data cache size / 512 kb
-	ecx <<= 19;	// L3 data cache size in bytes
+	auto l3DataCacheSize = (edx >> 18) << 19; // L3 data cache size in bytes
 
 #if 0
 	// AMD manual is unclear: Do we have to increase the value if the number of ways is not a power of 2 ?
-	edx >>= 12;
-	edx &= 0b1111;	// L3 associativity
+	edx = (edx >> 12) & 0b1111; // L3 associativity
 	if (edx < 3)
 		goto K100;
 
@@ -190,23 +148,23 @@ static bool AMDMethod(dataLayout& dataRef)
 		goto K100;
 
 	// Number of ways is not a power of 2, multiply by 1.5 ?
-	eax = ecx;
-	eax >>= 1;
-	ecx += eax;
-#endif
+	l3DataCacheSize += l3DataCacheSize >> 1;
 
 K100:
-	dataRef.level3 = ecx;	// Store L3 data cache size
+
+#endif
+
+	dataRef.level3 = l3DataCacheSize;	// Store L3 data cache size
 
 	// Check if OK
-	return !(dataRef.level1 > 0x400);
+	return !(dataRef.level1 < 0x400);
 }
 
-extern "C" DataCacheSize(unsigned level)
+extern "C" size_t DataCacheSize(int level)
 {
 	static dataLayout dataRef =
 	{
-		false,	// ok
+		false,	// Ok
 		{
             { 0, 0, 0, 0 }	// levels
 		},
@@ -274,63 +232,53 @@ extern "C" DataCacheSize(unsigned level)
 			{ 0xEC, 3, 3, 23 }	// 24 Mb L3 data cache
 		}
 	};
-	auto edi = level;
 
-	if (dataRef.ok)
-		goto D800;
+	if (!(dataRef.ok))
+	{
+		// Cache values haven't already been determined
+		int vendor;
+		CpuType(&vendor, nullptr, nullptr);
 
-	int vendor;
-	CpuType(&vendor, nullptr, nullptr);
+		if (vendor == 1)	// Intel
+		{
+			if (!IntelNewMethod(dataRef))
+				IntelOldMethod(dataRef);
+		}
+		else if (vendor == 2 || vendor == 3) // AMD or VIA
+		{
+			AMDMethod(dataRef);
+		}
+		else	// Other
+		{
+			if (!IntelNewMethod(dataRef))
+				if (!AMDMethod(dataRef))
+					IntelOldMethod(dataRef);
+		}
+	}
 
-	if (vendor == 1)
-		goto Intel;
-
-	if (vendor == 2)
-		goto AMD;
-
-	if (vendor == 3)
-		goto VIA;
-
-	if (IntelNewMethod(dataRef) || AMDMethod(dataRef) || IntelOldMethod(dataRef))
-		goto D800;
-	goto D800;	// Return whether success or not
-
-Intel:
-	if (IntelNewMethod(dataRef) || IntelOldMethod(dataRef))
-		goto D800;
-	goto D800;	// Return whether success or not
-
-AMD:	// AMD and VIA use same method
-VIA:
-	AMDMethod(dataRef);
-
-D800:
 	uint32_t result = 0;
-	if (edi > numLevels)
-		goto D900;
+	size_t lvl = level;
+	if (lvl > numLevels)
+		return result;
 
-	if (edi == 0)
-		goto D820;
+	if (lvl == 0)
+	{
+		// Level = 0. Get size of largest level cache
+		result = dataRef.level3;
+		if (result)
+			goto finish;
+
+		result = dataRef.level2;
+		if (result)
+			goto finish;
+
+		result = dataRef.level1;
+	}
 
 	// 0 < level < numLevels
-	result = dataRef.levels[edi - 1];	// Size of selected cache
-	goto D850;
+	result = dataRef.levels[lvl - 1];	// Size of selected cache
 
-D820:
-	// Level = 0. Get size of largest level cache
-	result = dataRef.level3;
-	if (result)
-		goto D850;
-
-	result = dataRef.level2;
-	if (result)
-		goto D850;
-
-	result = dataRef.level1;
-
-D850:
+finish:
 	dataRef.ok = true;	// Remember called, whether success or not
-
-D900:
 	return result;
 }

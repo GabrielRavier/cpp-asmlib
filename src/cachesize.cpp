@@ -92,7 +92,7 @@ static bool IntelOldMethod(dataLayout& dataRef)
 	descriptors32[3] = edx;
 
 	// Loop to read 16 descriptor bytes
-	for (uint32_t i = 15; i--; )
+	for (uint32_t i = 0; i < 16; ++i)
 	{
 		auto currentDescriptor = descriptors[i];
 		constexpr auto descriptorTblCnt = (sizeof(dataRef.descriptorTable) / sizeof(dataRef.descriptorTable[0]));

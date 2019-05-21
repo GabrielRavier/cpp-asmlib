@@ -11,14 +11,14 @@ SOURCE_FOLDER ?= src
 TESTS_FOLDER ?= tests
 
 # Tool names
-AR ?= ar
+AR = gcc-ar
 
 ifeq ($(RELEASE), 1)
 	# Optimization flags
 	# -O3 : Maximum standard-compliant optimization
 	# -flto : Link-time optimizations
 	# -s : Strip output file
-	CXXFLAGS = -O3 -flto -s
+	CXXFLAGS = -O3 -flto -s -Wl,-flto
 	LDFLAGS = -s
 	LIBRARY_BASENAME_DEF = asmlib
 else
@@ -46,8 +46,8 @@ CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
 # Add strcpy when we can actually link it
-SOURCES = cachesize cputype debugbreak round cpuid rdtsc
-TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC
+SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi
+TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))

@@ -3,13 +3,11 @@ A_strcat: A_strlen A_memcpy
 A_substring: A_strlen A_memcpy
 A_popcount: InstructionSet
 strcount_UTF8: InstructionSet
-ProcessorName:
 A_strcmp: InstructionSet
-UnalignedIsFaster:
+UnalignedIsFaster: InstructionSet
 Store256BitIsFaster: InstructionSet
 A_strlen: InstructionSet
 A_strstr: InstructionSet
-InstructionSet:
 A_strtolower: InstructionSet
 PhysicalSeed:
 A_strspn: InstructionSet

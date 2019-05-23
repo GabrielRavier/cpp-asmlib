@@ -1,7 +1,6 @@
-A_strcpy: A_strlen A_memcpy
-A_strcat: A_strlen A_memcpy
-A_substring: A_strlen A_memcpy
-A_strlen:
+A_strcpy: A_memcpy
+A_strcat: A_memcpy
+A_substring: A_memcpy
 A_strstr:
 A_strtolower:
 PhysicalSeed:

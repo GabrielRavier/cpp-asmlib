@@ -1,7 +1,6 @@
 A_strcpy: A_strlen A_memcpy
 A_strcat: A_strlen A_memcpy
 A_substring: A_strlen A_memcpy
-strcount_UTF8:
 A_strcmp:
 A_strlen:
 A_strstr:

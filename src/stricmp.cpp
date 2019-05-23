@@ -3,7 +3,7 @@
 extern "C" int A_stricmp(const char *str1, const char *str2)
 {
 	size_t offset = str2 - str1;
-	char currentChar;
+	uint8_t currentChar;
 	do
 	{
 		currentChar = *str1;
@@ -19,7 +19,7 @@ extern "C" int A_stricmp(const char *str1, const char *str2)
 				if (currentChar >= ('Z' - 'A'))
 					currentChar += 0x20;
 
-				char currentChar2 = *(str1 + offset);
+				uint8_t currentChar2 = *(str1 + offset);
 				currentChar2 -= 'A';
 				if (currentChar2 >= ('Z' - 'A'))
 					currentChar2 += 0x20;

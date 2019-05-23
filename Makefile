@@ -47,8 +47,8 @@ CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
 # Add strcpy when we can actually link it
-SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount
-TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount
+SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount strcountutf8 strcountset
+TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount testStrCountUTF8 testStrCountInSet
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
@@ -58,12 +58,16 @@ DEPENDENCIES_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(ad
 DEPENDENCIES_TESTS = $(addprefix $(TESTS_FOLDER)/$(OBJECT_FOLDER)/, $(addsuffix .o.d, $(TESTS)))
 
 # Main target are the .a library file and the shared .so file
-all: $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME) $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME) tests
+all: lib tests
 	@echo Build finished without errors !
+
+.SECONDARY: $(OBJECTS) $(OBJECTS_SHARED) $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o
 
 tests: $(BINARIES_TESTS)
 
-$(TESTS_FOLDER)/$(BINARY_FOLDER)/%: $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME)
+lib: $(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME) $(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME)
+
+$(TESTS_FOLDER)/$(BINARY_FOLDER)/%: $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o lib
 	@mkdir -p $(@D)
 	@echo Making binary $@ for testing...
 	@$(CXX) $(CXXFLAGS) -o $@ $< -L$(LIBRARY_FOLDER) -l$(LIBRARY_BASENAME)
@@ -71,13 +75,13 @@ $(TESTS_FOLDER)/$(BINARY_FOLDER)/%: $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o $(LIBRA
 	@./$@
 	@echo Test $@ succeeded !
 
-$(LIBRARY_FOLDER)/$(STATIC_LIBRARY_NAME): $(OBJECTS)
+%.a: $(OBJECTS)
 	@mkdir -p $(@D)
 	@echo Making archive $@...
 	@$(AR) rcs $@ $^
 	@echo Made archive $@ !
 
-$(LIBRARY_FOLDER)/$(SHARED_LIBRARY_NAME): $(OBJECTS_SHARED)
+%.so: $(OBJECTS_SHARED)
 	@mkdir -p $(@D)
 	@echo Linking shared library $@...
 	@$(CXX) $(CXXFLAGS) -shared $^ -o $@

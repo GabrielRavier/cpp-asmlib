@@ -34,7 +34,7 @@ uint32_t popcountGeneric(uint32_t x)
 
 
 static uint32_t popcountCPUDispath(uint32_t x);
-static auto functionDispatch = popcountCPUDispath;
+static auto popcountDispatch = popcountCPUDispath;
 
 static uint32_t popcountCPUDispath(uint32_t x)
 {
@@ -44,12 +44,12 @@ static uint32_t popcountCPUDispath(uint32_t x)
 	if (instructionSet >= 9)
 		result = popcountSSE42;
 
-	functionDispatch = result;
+	popcountDispatch = result;
 
 	return result(x);
 }
 
-uint32_t A_popcount(uint32_t x)
+extern "C" uint32_t A_popcount(uint32_t x)
 {
-	return functionDispatch(x);
+	return popcountDispatch(x);
 }

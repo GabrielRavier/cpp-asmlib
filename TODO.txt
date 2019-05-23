@@ -1,22 +1,20 @@
 A_strcpy: A_strlen A_memcpy
 A_strcat: A_strlen A_memcpy
 A_substring: A_strlen A_memcpy
-A_popcount: InstructionSet
-strcount_UTF8: InstructionSet
-A_strcmp: InstructionSet
-UnalignedIsFaster: InstructionSet
-Store256BitIsFaster: InstructionSet
-A_strlen: InstructionSet
-A_strstr: InstructionSet
-A_strtolower: InstructionSet
+A_popcount:
+strcount_UTF8:
+A_strcmp:
+A_strlen:
+A_strstr:
+A_strtolower:
 PhysicalSeed:
-A_strspn: InstructionSet
-A_strcspn: InstructionSet
-mother: InstructionSet
-divfixedv: InstructionSet
-A_memcmp: InstructionSet
-A_memset: InstructionSet
-mersenne: InstructionSet
-sfmt: InstructionSet
-A_memmove: InstructionSet
-A_memcpy: InstructionSet UnalignedIsFaster Store256BitIsFaster
+A_strspn:
+A_strcspn:
+mother:
+divfixedv:
+A_memcmp:
+A_memset:
+mersenne:
+sfmt:
+A_memmove:
+A_memcpy:

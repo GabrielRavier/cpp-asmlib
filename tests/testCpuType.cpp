@@ -1,7 +1,7 @@
 #include "asmlib.h"
 #include <iostream>
 
-const char *vendorIDToStr(int vendor)
+static const char *vendorIDToStr(int vendor)
 {
 	switch (vendor)
 	{

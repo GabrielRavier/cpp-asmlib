@@ -4,13 +4,13 @@
 #include <iostream>
 #include <unistd.h>
 
-void sigtrapHandler(int /* sigNum */)
+static void sigtrapHandler(int /* sigNum */)
 {
 	std::cout << "A_DebugBreak successfully raised a SIGTRAP !\n";
 	std::quick_exit(0);
 }
 
-void sigabrtHandler(int /* sigNum */)
+static void sigabrtHandler(int /* sigNum */)
 {
 	std::cout << "A_DebugBreak successfully raised a SIGABRT !\n";
 	std::quick_exit(0);

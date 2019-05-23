@@ -1,7 +1,7 @@
 #include "asmlib.h"
 #include <iostream>
 
-std::string getVendorString()
+static std::string getVendorString()
 {
 	int abcd[4];
 	char vendorStr[13];

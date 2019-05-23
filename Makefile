@@ -46,7 +46,7 @@ CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
 # Add strcpy when we can actually link it
-SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset
+SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster
 TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))

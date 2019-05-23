@@ -47,8 +47,8 @@ CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
 # Add strcpy when we can actually link it
-SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount strcountutf8 strcountset
-TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount testStrCountUTF8 testStrCountInSet
+SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount strcountutf8 strcountset strcmp
+TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount testStrCountUTF8 testStrCountInSet testStrcmp
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
@@ -61,7 +61,7 @@ DEPENDENCIES_TESTS = $(addprefix $(TESTS_FOLDER)/$(OBJECT_FOLDER)/, $(addsuffix 
 all: lib tests
 	@echo Build finished without errors !
 
-.SECONDARY: $(OBJECTS) $(OBJECTS_SHARED) $(TESTS_FOLDER)/$(OBJECT_FOLDER)/%.o
+.SECONDARY: $(OBJECTS) $(OBJECTS_SHARED) $(wildcard $(TESTS_FOLDER)/$(OBJECT_FOLDER)/*.o)
 
 tests: $(BINARIES_TESTS)
 

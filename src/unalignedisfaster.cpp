@@ -56,7 +56,7 @@ namespace store256FasterRetVals
 	constexpr int thirtyTwoBytesMemoryWriteFaster = 2;
 }
 
-extern "C" int Store256IsFaster()
+extern "C" int Store256BitIsFaster()
 {
 	// Check AVX support first
 	if (InstructionSet() < 11)

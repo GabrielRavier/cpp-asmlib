@@ -1,5 +1,4 @@
 #include "asmlib.h"
-#include <emmintrin.h>
 #include <smmintrin.h>
 
 size_t strCountInSetSSE42(const char *str, const char *set) __attribute__((target("sse4.2")));

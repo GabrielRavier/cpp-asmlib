@@ -1,5 +1,4 @@
 #include "asmlib.h"
-#include <emmintrin.h>
 #include <smmintrin.h>
 
 int strcmpSSE42(const char *str1, const char *str2) __attribute__((target("sse4.2")));

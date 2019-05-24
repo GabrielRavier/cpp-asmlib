@@ -4,7 +4,7 @@
 #include <functional>
 #include <cstring>
 
-[[noreturn]] void strcmpError(const char *str1, const char *str2, int expectedResult, int falseResult)
+[[noreturn]] static void strcmpError(const char *str1, const char *str2, int expectedResult, int falseResult)
 {
 	std::cerr << "Error when comparing \"" << str1 << "\" and \"" << str2 << "\" : Got " << falseResult << " instead of " << expectedResult << " !\n";
 	std::quick_exit(1);
@@ -13,7 +13,7 @@
 int strcmpGeneric(const char *str1, const char *str2);
 int strcmpSSE42(const char *str1, const char *str2);
 
-std::vector<std::function<int(const char *, const char *)>> getAvailableStrcmpFunctions()
+static auto getAvailableStrcmpFunctions()
 {
 	std::vector<std::function<int(const char *, const char *)>> result = {strcmpGeneric};
 

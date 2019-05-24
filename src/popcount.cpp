@@ -1,5 +1,4 @@
 #include "asmlib.h"
-#include <functional>
 #include <smmintrin.h>
 
 uint32_t popcountSSE42(uint32_t x) __attribute__((target("popcnt")));

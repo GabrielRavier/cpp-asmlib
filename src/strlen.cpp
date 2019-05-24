@@ -77,5 +77,9 @@ static size_t strlenCPUDispatch(const char *str)
 
 extern "C" size_t A_strlen(const char *str)
 {
+#ifdef __i386__
 	return strlenDispatch(str);
+#else
+	return strlenSSE2(str);
+#endif
 }

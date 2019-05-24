@@ -104,7 +104,7 @@ extern "C" char *ProcessorName()
 
 	// Get family and model
 	strcat(pName, " Family ");
-	pName += strlen(pName);
+	pName += A_strlen(pName);
 
 	__cpuid(1, eax, ebx, ecx, edx);
 	auto family = (eax >> 8) & 0xF;

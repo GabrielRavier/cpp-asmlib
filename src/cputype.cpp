@@ -1,33 +1,5 @@
 #include "asmlib.h"
-#include <cpuid.h>
-
-static bool isCPUIDSupported()
-{
-#if __i386__
-	int __cpuid_supported;
-
-	__asm("  pushfl\n"
-	"  popl   %%eax\n"
-	"  movl   %%eax,%%ecx\n"
-	"  xorl   $0x00200000,%%eax\n"
-	"  pushl  %%eax\n"
-	"  popfl\n"
-	"  pushfl\n"
-	"  popl   %%eax\n"
-	"  movl   $0,%0\n"
-	"  cmpl   %%eax,%%ecx\n"
-	"  je     1f\n"
-	"  movl   $1,%0\n"
-	"1:"
-	: "=r" (__cpuid_supported) : : "eax", "ecx");
-	if (!__cpuid_supported)
-		return false;
-	return true;
-#else
-	// x86-64
-	return true;
-#endif
-}
+#include "asmlib-internal.h"
 
 extern "C" void CpuType(int *pVendor, int *pFamily, int *pModel)
 {
@@ -35,7 +7,7 @@ extern "C" void CpuType(int *pVendor, int *pFamily, int *pModel)
 	int family = 0;
 	int model = 0;
 
-	if (!isCPUIDSupported())
+	if (!asmlibInternal::isCPUIDSupported())
 		goto end;	// CPUID not supported
 
 	uint32_t eax, ebx, ecx, edx;

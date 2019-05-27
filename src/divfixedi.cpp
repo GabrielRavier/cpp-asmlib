@@ -1,39 +1,16 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <csignal>
 #include <algorithm>
-
-static int32_t bsr(int32_t x)
-{
-	return 31 - __builtin_clz(x);
-}
-
-[[noreturn]] static void error()
-{
-#if defined(__i386__) || defined(__x86_64__)
-	//__asm__ volatile("movl 1, %%edx; divl %%edx");	// Overflow error
-	__asm__ volatile("ud2");	// Illegal instruction error
-#endif
-
-	raise(0);
-
-#if defined(__GNUC__)
-	__builtin_trap();
-#else
-	raise(SIGILL);
-#endif
-
-	for(;;)
-		;
-}
 
 extern "C" void setdivisori32(int32_t buffer[2], int32_t d)
 {
 	int32_t shiftCount = -1;
 	if (d - 1)
-		shiftCount = bsr(d - 1);	// floor(log2(d-1))
+		shiftCount = asmlibInternal::bsr(d - 1);	// floor(log2(d-1))
 
 	if (d < 0)
-		error();
+		asmlibInternal::raiseIllegalInstructionError();
 
 	shiftCount = std::max(shiftCount, 0);	// Avoid negative shift count
 
@@ -87,7 +64,7 @@ extern "C" void setdivisoru32(uint32_t buffer[2], uint32_t d)
 {
 	int32_t L = -1;
 	if (d - 1)
-		L = bsr(d - 1);	// L = floor(log2(d - 1))
+		L = asmlibInternal::bsr(d - 1);	// L = floor(log2(d - 1))
 
 	++L;	// L = ceil(log2(d))
 

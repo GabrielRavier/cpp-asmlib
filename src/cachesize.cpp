@@ -1,9 +1,9 @@
+#include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <algorithm>
-#include <cpuid.h>
-#include "asmlib.h"
 
 struct descriptorRecord	// Record for table of cache descriptors
 {
@@ -29,8 +29,6 @@ struct dataLayout	// Reference point
 	};
 	descriptorRecord descriptorTable[61];
 };
-
-constexpr size_t numLevels = 4;	// Max level
 
 static bool IntelNewMethod(dataLayout& dataRef)
 {
@@ -62,7 +60,7 @@ static bool IntelNewMethod(dataLayout& dataRef)
 
 		eax = (eax >> 5) & 0b111;	// Cache level
 
-		eax = std::min((size_t)eax, numLevels);
+		eax = std::min((size_t)eax, asmlibInternal::maximumCacheLevel);
 		dataRef.levels[eax - 1] = calculatedCacheSize;	// Store size of data (eax is level)
 	}
 
@@ -261,7 +259,7 @@ extern "C" size_t DataCacheSize(int level)
 
 	uint32_t result = 0;
 	size_t lvl = level;
-	if (lvl > numLevels)
+	if (lvl > asmlibInternal::maximumCacheLevel)
 		return result;
 
 	if (lvl == 0)

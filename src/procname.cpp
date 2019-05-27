@@ -1,37 +1,9 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstdint>
 #include <cstring>
-#include <cpuid.h>
 
-static bool isCPUIDSupported()
-{
-	#if __i386__
-	int __cpuid_supported;
-
-	__asm("  pushfl\n"
-	"  popl   %%eax\n"
-	"  movl   %%eax,%%ecx\n"
-	"  xorl   $0x00200000,%%eax\n"
-	"  pushl  %%eax\n"
-	"  popfl\n"
-	"  pushfl\n"
-	"  popl   %%eax\n"
-	"  movl   $0,%0\n"
-	"  cmpl   %%eax,%%ecx\n"
-	"  je     1f\n"
-	"  movl   $1,%0\n"
-	"1:"
-	: "=r" (__cpuid_supported) : : "eax", "ecx");
-	if (!__cpuid_supported)
-		return false;
-	return true;
-	#else
-	// x86-64
-	return true;
-	#endif
-}
-
-static void WriteDigit(char *str, uint8_t num)
+inline void WriteDigit(char *str, uint8_t num)
 {
 	if (num > 10)
 		num += 'A' - 10;	// A - F
@@ -41,14 +13,14 @@ static void WriteDigit(char *str, uint8_t num)
 	*str = num;
 }
 
-static char *WriteHex(char *str, uint8_t num)
+inline char *WriteHex(char *str, uint8_t num)
 {
 	WriteDigit(str, (num >> 4) & 0xF);	// Most significant digit first
 	WriteDigit(str + 1, num & 0xF);	// Next digit
 	return str + 2;
 }
 
-static char *processorNameNoCPUID(char *buf)
+inline char *processorNameNoCPUID(char *buf)
 {
 	return strcpy(buf, "80386 or 80486");
 }
@@ -58,7 +30,7 @@ extern "C" char *ProcessorName()
 	static char NameBuffer[0x50] = {0};	// Static buffer to contain name
 	char *pName = NameBuffer;
 
-	if (!isCPUIDSupported())
+	if (!asmlibInternal::isCPUIDSupported())
 		return processorNameNoCPUID(NameBuffer);
 
 	uint32_t eax, ebx, ecx, edx;

@@ -1,23 +1,24 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 
-static const char *vendorIDToStr(int vendor)
+inline const char *vendorIDToStr(int vendor)
 {
 	switch (vendor)
 	{
-		case 1:
+		case asmlibInternal::CpuTypeReturnValues::Intel:
 			return "Intel";
 
-		case 2:
+		case asmlibInternal::CpuTypeReturnValues::AMD:
 			return "AMD";
 
-		case 3:
+		case asmlibInternal::CpuTypeReturnValues::VIA:
 			return "VIA";
 
-		case 4:
+		case asmlibInternal::CpuTypeReturnValues::Cyrix:
 			return "Cyrix";
 
-		case 5:
+		case asmlibInternal::CpuTypeReturnValues::NexGen:
 			return "NexGen";
 
 		default:

@@ -10,10 +10,10 @@ extern "C" int UnalignedIsFaster()
 	{
 		// Pentium 1 or older, Old Netburst architecture, earlier than Nehalem or Atom
 		if (family <= 6 || family == 0xF || family <= 0x1A || family == 0x1C)
-			return asmlibInternal::unalignedIsFasterRetVals::probablySlower;
+			return asmlibInternal::unalignedIsFasterReturnValues::probablySlower;
 
 		// Nehalem and later except Atom
-		return asmlibInternal::unalignedIsFasterRetVals::probablyFaster;
+		return asmlibInternal::unalignedIsFasterReturnValues::probablyFaster;
 	}
 	else if (vendor == 2)	// AMD
 	{
@@ -26,28 +26,28 @@ extern "C" int UnalignedIsFaster()
 
 		// K8 or earlier or Jaguar
 		if (family <= 0x10 || family == 0x16)
-			return asmlibInternal::unalignedIsFasterRetVals::probablySlower;
+			return asmlibInternal::unalignedIsFasterReturnValues::probablySlower;
 
 		// K10 or later
-		return asmlibInternal::unalignedIsFasterRetVals::probablyFaster;
+		return asmlibInternal::unalignedIsFasterReturnValues::probablyFaster;
 	}
 	else if (vendor == 3)	// VIA
 	{
 		// Unaligned read is not faster than PALIGNR on VIA Nano 2000 and 3000
 		if (family <= 0xF)
-			return asmlibInternal::unalignedIsFasterRetVals::probablySlower;
+			return asmlibInternal::unalignedIsFasterReturnValues::probablySlower;
 		// Future versions : unknown
-		return asmlibInternal::unalignedIsFasterRetVals::unknown;
+		return asmlibInternal::unalignedIsFasterReturnValues::unknown;
 	}
 	else
-		return asmlibInternal::unalignedIsFasterRetVals::unknown;	// Unknown
+		return asmlibInternal::unalignedIsFasterReturnValues::unknown;	// Unknown
 }
 
 extern "C" int Store256BitIsFaster()
 {
 	// Check AVX support first
 	if (InstructionSet() < 11)
-		return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
+		return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
 
 	int vendor, family, model;
 	CpuType(&vendor, &family, &model);
@@ -55,32 +55,32 @@ extern "C" int Store256BitIsFaster()
 	if (vendor == 1)	// Intel
 	{
 		if (family != 6)	// Unknown family, possibly future model
-			return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteFaster;
+			return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteFaster;
 
 		if (model <= 0x3A)	// Ivy Bridge or Sandy Bridge
-			return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
+			return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
 
 		// Haswell is much faster with 256 bit moves
-		return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteFaster;
+		return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteFaster;
 	}
 	else if (vendor == 2)	// AMD
 	{
 		if (family > 0x15)	// Family 0x15 : Bulldozer, Piledriver
-			return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteFaster;	// Assume future AMD families are faster
+			return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteFaster;	// Assume future AMD families are faster
 
 		// Model 1 : Bulldozer is a little slower on 256 bit write
 		// Model 2 : Piledriver is terribly slow on 256 bit write
 		// Model 0x30 : Steamroller is reasonable on 256 bit write
 
 		if (model <= 0x30)
-			return asmlibInternal::store256FasterRetVals::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
+			return asmlibInternal::store256FasterReturnValues::thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported;
 
-		return asmlibInternal::store256FasterRetVals::unknown;	// Later models : Don't know
+		return asmlibInternal::store256FasterReturnValues::unknown;	// Later models : Don't know
 	}
 	else if (vendor == 3)	// VIA
 	{
-		return asmlibInternal::store256FasterRetVals::unknown;	// Don't know
+		return asmlibInternal::store256FasterReturnValues::unknown;	// Don't know
 	}
 	else	// Unknown
-		return asmlibInternal::store256FasterRetVals::unknown;	// Don't know
+		return asmlibInternal::store256FasterReturnValues::unknown;	// Don't know
 }

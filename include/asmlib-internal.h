@@ -130,14 +130,14 @@ namespace asmlibInternal
 		return ediOut;
 	}
 
-	namespace unalignedIsFasterRetVals
+	namespace unalignedIsFasterReturnValues
 	{
 		constexpr int probablySlower = 0;	// Unaligned read is probably slower than alignment shift
 		constexpr int unknown = 1;
 		constexpr int probablyFaster = 2;	// Unaligned read is probably faster than alignment shift
 	}
 
-	namespace store256FasterRetVals
+	namespace store256FasterReturnValues
 	{
 		constexpr int thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported = 0;
 		constexpr int unknown = 1;
@@ -152,4 +152,40 @@ namespace asmlibInternal
 		constexpr int usedIntelRNG = 3;
 		constexpr int usedIntelSeedGenerator = 4;
 	}
+
+	namespace CpuTypeReturnValues
+	{
+		constexpr int Intel = 1;
+		constexpr int AMD = 2;
+		constexpr int VIA = 3;
+		constexpr int Cyrix = 4;
+		constexpr int NexGen = 5;
+	}
+
+	namespace InstructionSetReturnValues
+	{
+		constexpr int i386Only = 0;
+		constexpr int mmxSupported = 1;
+		constexpr int cmovAndFcomiSupported = 2;
+		constexpr int sseSupported = 3;
+		constexpr int sse2Supported = 4;
+		constexpr int sse3Supported = 5;
+		constexpr int ssse3Supported = 6;
+		constexpr int sse41Supported = 8;
+		constexpr int popcntSupported = 9;
+		constexpr int sse42Supported = 10;
+		constexpr int avxSupported = 11;
+		constexpr int pclmulAndAESSupported = 12;
+		constexpr int avx2Supported = 13;
+		constexpr int fma3F16CBmi1Bmi2LzcntSupported = 14;
+		constexpr int avx512FSupported = 15;
+		constexpr int avx512BWAvx512DQAvx512VlSupported = 16;
+	}
+}
+
+// Function declarations for internal functions
+extern "C"
+{
+	uint32_t popcountSSE42(uint32_t x);
+	uint32_t popcountGeneric(uint32_t x);
 }

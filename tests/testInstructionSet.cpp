@@ -1,67 +1,68 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 #include <string>
 
-static std::string getInstructionSetStr(int instrSet)
+inline std::string getInstructionSetStr(int instrSet)
 {
 	std::string result = "All up to and including ";
 
 	switch (instrSet)
 	{
-		case 0:
+		case asmlibInternal::InstructionSetReturnValues::i386Only:
 			return result + "i386";
 
-		case 1:
+		case asmlibInternal::InstructionSetReturnValues::mmxSupported:
 			return result + "MMX";
 
-		case 2:
+		case asmlibInternal::InstructionSetReturnValues::cmovAndFcomiSupported:
 			return result + "cmov and fcomi";
 
-		case 3:
+		case asmlibInternal::InstructionSetReturnValues::sseSupported:
 			return result + "SSE";
 
-		case 4:
+		case asmlibInternal::InstructionSetReturnValues::sse2Supported:
 			return result + "SSE2";
 
-		case 5:
+		case asmlibInternal::InstructionSetReturnValues::sse3Supported:
 			return result + "SSE3";
 
-		case 6:
-		case 7:
+		case asmlibInternal::InstructionSetReturnValues::ssse3Supported:
+		case asmlibInternal::InstructionSetReturnValues::ssse3Supported + 1:
 			return result + "SSSE3";
 
-		case 8:
+		case asmlibInternal::InstructionSetReturnValues::sse41Supported:
 			return result + "SSE4.1";
 
-		case 9:
+		case asmlibInternal::InstructionSetReturnValues::popcntSupported:
 			return result + "popcnt";
 
-		case 10:
+		case asmlibInternal::InstructionSetReturnValues::sse42Supported:
 			return result + "SSE4.2";
 
-		case 11:
+		case asmlibInternal::InstructionSetReturnValues::avxSupported:
 			return result + "AVX";
 
-		case 12:
+		case asmlibInternal::InstructionSetReturnValues::pclmulAndAESSupported:
 			return result + "pclmul and AES";
 
-		case 13:
+		case asmlibInternal::InstructionSetReturnValues::avx2Supported:
 			return result + "AVX2";
 
-		case 14:
+		case asmlibInternal::InstructionSetReturnValues::fma3F16CBmi1Bmi2LzcntSupported:
 			return result + "FMA3, F16C, BMI1, BMI2 and lzcnt";
 
-		case 15:
+		case asmlibInternal::InstructionSetReturnValues::avx512FSupported:
 			return result + "AVX512F";
 
-		case 16:
+		case asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported:
 			return result + "AVX512BW, AVX512DQ and AVX512VL";
 
 		default:
-			if (instrSet < 0)
+			if (instrSet < asmlibInternal::InstructionSetReturnValues::i386Only)
 				return "Function broken";
 
-			if (instrSet > 16)
+			if (instrSet > asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported)
 				return "Above AVX512BW, AVX512DQ and AVX512VL";
 	}
 
@@ -73,5 +74,4 @@ int main()
 	int instrSet = InstructionSet();
 
 	std::cout << "Reported instruction set : " << instrSet << " (" << getInstructionSetStr(instrSet) << ")\n";
-
 }

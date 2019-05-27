@@ -21,19 +21,19 @@ inline const char *getStringFromGeneratorUsedValue(int value)
 {
 	switch (value)
 	{
-		case 0:
+		case asmlibInternal::PhysicalSeedReturnValues::failureOrNoSuitableInstructionAvailable:
 			return "There was either a failure in generating random values or there was no suitable instruction available";
 
-		case 1:
+		case asmlibInternal::PhysicalSeedReturnValues::noPhysicalRNGUsedTSCInstead:
 			return "No physical number generator was available : Used time stamp counter instead";
 
-		case 2:
+		case asmlibInternal::PhysicalSeedReturnValues::usedVIAPhysicalRNG:
 			return "Used VIA physical number generator";
 
-		case 3:
+		case asmlibInternal::PhysicalSeedReturnValues::usedIntelRNG:
 			return "Used Intel pseudo-random number generator";
 
-		case 4:
+		case asmlibInternal::PhysicalSeedReturnValues::usedIntelSeedGenerator:
 			return "Used Intel seed generator";
 
 		default:
@@ -41,7 +41,7 @@ inline const char *getStringFromGeneratorUsedValue(int value)
 	}
 }
 
-void doOnePhysicalSeedFunction(std::function<int(int *, int)> function, const char *functionName)
+inline void doOnePhysicalSeedFunction(std::function<int(int *, int)> function, const char *functionName)
 {
 	int seeds[seedArraySize];
 	auto generatorUsed = function(seeds, seedArraySize);

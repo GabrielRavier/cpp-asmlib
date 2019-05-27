@@ -4,26 +4,6 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 
-namespace instructionSetRetVals
-{
-	constexpr int i386Only = 0;
-	constexpr int mmxSupported = 1;
-	constexpr int cmovAndFcomiSupported = 2;
-	constexpr int sseSupported = 3;
-	constexpr int sse2Supported = 4;
-	constexpr int sse3Supported = 5;
-	constexpr int ssse3Supported = 6;
-	constexpr int sse41Supported = 8;
-	constexpr int popcntSupported = 9;
-	constexpr int sse42Supported = 10;
-	constexpr int avxSupported = 11;
-	constexpr int pclmulAndAESSupported = 12;
-	constexpr int avx2Supported = 13;
-	constexpr int fma3F16CBmi1Bmi2LzcntSupported = 14;
-	constexpr int avx512FSupported = 15;
-	constexpr int avx512BWAvx512DQAvx512VlSupported = 16;
-}
-
 extern "C" int InstructionSet()
 {
 	static int supportedInstructionSet = -1;
@@ -32,7 +12,7 @@ extern "C" int InstructionSet()
 		return supportedInstructionSet;	// Has been called before. Early return
 
 	// Function has not been called before
-	int result = instructionSetRetVals::i386Only;
+	int result = asmlibInternal::InstructionSetReturnValues::i386Only;
 	uint32_t eax, ebx, ecx, edx;
 
 	if (!asmlibInternal::isCPUIDSupported())
@@ -74,49 +54,49 @@ extern "C" int InstructionSet()
 
 #endif
 
-	result = instructionSetRetVals::sse2Supported;
+	result = asmlibInternal::InstructionSetReturnValues::sse2Supported;
 
 	// Check SSE3 support
 	if (!asmlibInternal::bitTest(ecx, 0))
 		goto end;
 
-	result = instructionSetRetVals::sse3Supported;
+	result = asmlibInternal::InstructionSetReturnValues::sse3Supported;
 
 	// Check SSSE3 support
 	if (!asmlibInternal::bitTest(ecx, 9))
 		goto end;
 
-	result = instructionSetRetVals::ssse3Supported;
+	result = asmlibInternal::InstructionSetReturnValues::ssse3Supported;
 
 	// Check SSE4.1 support
 	if (!asmlibInternal::bitTest(ecx, 19))
 		goto end;
 
-	result = instructionSetRetVals::sse41Supported;
+	result = asmlibInternal::InstructionSetReturnValues::sse41Supported;
 
 	// Check popcnt support
 	if (!asmlibInternal::bitTest(ecx, 23))
 		goto end;
 
-	result = instructionSetRetVals::popcntSupported;
+	result = asmlibInternal::InstructionSetReturnValues::popcntSupported;
 
 	// Check SSE4.2 support
 	if (!asmlibInternal::bitTest(ecx, 20))
 		goto end;
 
-	result = instructionSetRetVals::sse42Supported;
+	result = asmlibInternal::InstructionSetReturnValues::sse42Supported;
 
 	// Check CPU support for xgetbv, OS support for AVX and CPU support for AVX
 	if (!asmlibInternal::bitTest(ecx, 27) || asmlibInternal::doesOSSupportAVX() || !asmlibInternal::bitTest(ecx, 28))
 		goto end;
 
-	result = instructionSetRetVals::avxSupported;
+	result = asmlibInternal::InstructionSetReturnValues::avxSupported;
 
 	// Check pclmul and AES support
 	if (!asmlibInternal::bitTest(ecx, 1) || !asmlibInternal::bitTest(ecx, 25))
 		goto end;
 
-	result = instructionSetRetVals::pclmulAndAESSupported;
+	result = asmlibInternal::InstructionSetReturnValues::pclmulAndAESSupported;
 
 	uint32_t savedEcx;
 	savedEcx = ecx;	// Save ecx from original cpuid
@@ -127,7 +107,7 @@ extern "C" int InstructionSet()
 		goto end;
 
 	ecx = savedEcx;
-	result = instructionSetRetVals::avx2Supported;
+	result = asmlibInternal::InstructionSetReturnValues::avx2Supported;
 
 	// Check FMA3, F16C, BMI1 and BMI2 support
 	if (!asmlibInternal::bitTest(ecx, 12) || !asmlibInternal::bitTest(ecx, 29) || !asmlibInternal::bitTest(ebx, 3) || !asmlibInternal::bitTest(ebx, 8))
@@ -143,19 +123,19 @@ extern "C" int InstructionSet()
 
 	ebx = savedEbx;
 	ecx = savedEcx;
-	result = instructionSetRetVals::fma3F16CBmi1Bmi2LzcntSupported;
+	result = asmlibInternal::InstructionSetReturnValues::fma3F16CBmi1Bmi2LzcntSupported;
 
 	// Check AVX512F support
 	if (!asmlibInternal::bitTest(ebx, 16))
 		goto end;
 
-	result = instructionSetRetVals::avx512FSupported;
+	result = asmlibInternal::InstructionSetReturnValues::avx512FSupported;
 
 	// Check AVX512DQ, AVX512BW and AVX512VL support
 	if (!asmlibInternal::bitTest(ebx, 17) || !asmlibInternal::bitTest(ebx, 30) || !asmlibInternal::bitTest(ebx, 31))
 		goto end;
 
-	result = instructionSetRetVals::avx512BWAvx512DQAvx512VlSupported;
+	result = asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported;
 
 end:
 	supportedInstructionSet = result;

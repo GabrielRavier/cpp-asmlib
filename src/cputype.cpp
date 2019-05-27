@@ -17,15 +17,15 @@ extern "C" void CpuType(int *pVendor, int *pFamily, int *pModel)
 	// ecx : Last 4 characters of vendor string
 	// ebx : First 4 characters of vendor string
 	if (ecx == 0x6C65746E)	// 'ntel' ('GenuineIntel')
-		vendor |= 1;
+		vendor = asmlibInternal::CpuTypeReturnValues::Intel;
 	else if (ecx == 0x444D4163)	// 'cAMD' ('AuthenticAMD')
-		vendor |= 2;
+		vendor = asmlibInternal::CpuTypeReturnValues::AMD;
 	else if (ebx == 0x746E6543 || ebx == 0x20414956)	// 'Cent' ('CentaurHauls'), 'VIA ' ('VIA VIA VIA ')
-		vendor |= 3;
+		vendor = asmlibInternal::CpuTypeReturnValues::VIA;
 	else if (ebx == 0x69727943)	// 'Cyri' ('CyrixInstead')
-		vendor |= 4;
+		vendor = asmlibInternal::CpuTypeReturnValues::Cyrix;
 	else if (ebx == 0x4778654E)	// 'NexG' ('NexGenDriven')
-		vendor |= 5;
+		vendor = asmlibInternal::CpuTypeReturnValues::NexGen;
 
 	// Other, do nothing
 

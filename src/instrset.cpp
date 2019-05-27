@@ -4,13 +4,6 @@
 #include <x86intrin.h>
 #include <immintrin.h>
 
-static bool doesOSSupportAVX() __attribute__((target("avx")));	// Needs avx attribute for _xgetbv to work
-static bool doesOSSupportAVX()
-{
-	uint64_t bv = _xgetbv(0);
-	return (bv & 6) == 6;
-}
-
 namespace instructionSetRetVals
 {
 	constexpr int i386Only = 0;
@@ -114,7 +107,7 @@ extern "C" int InstructionSet()
 	result = instructionSetRetVals::sse42Supported;
 
 	// Check CPU support for xgetbv, OS support for AVX and CPU support for AVX
-	if (!asmlibInternal::bitTest(ecx, 27) || doesOSSupportAVX() || !asmlibInternal::bitTest(ecx, 28))
+	if (!asmlibInternal::bitTest(ecx, 27) || asmlibInternal::doesOSSupportAVX() || !asmlibInternal::bitTest(ecx, 28))
 		goto end;
 
 	result = instructionSetRetVals::avxSupported;

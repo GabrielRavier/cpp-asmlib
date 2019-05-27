@@ -1,5 +1,6 @@
 #include "asmlib.h"
 #include "asmlibran.h"
+#include <utility>
 #include <climits>
 #include <csignal>
 #include <cpuid.h>
@@ -102,5 +103,53 @@ namespace asmlibInternal
 	inline bool doesOSSupportAVX()
 	{
 		return (_xgetbv(0) & 6) == 6;
+	}
+
+	inline std::pair<uint32_t, uint32_t *> xstore(uint32_t *addr, uint32_t edxIn, uint32_t ecxIn)
+	{
+		uint32_t eaxOut;
+		uint32_t *ediOut;
+
+		asm("rep xstore"
+		: "=m" (*addr), "=a" (eaxOut), "=D" (ediOut)
+		: "d" (edxIn), "D" (addr), "c" (ecxIn)
+		: "memory"
+		);
+
+		return {eaxOut, ediOut};
+	}
+
+	inline void *stosb(void *s, char c, size_t n)
+	{
+		void *ediOut;
+		asm volatile (
+			"rep stosb\n"
+			: "=D" (ediOut)
+			: "c" (n), "a" (c), "D" (s)
+			: "memory");
+		return ediOut;
+	}
+
+	namespace unalignedIsFasterRetVals
+	{
+		constexpr int probablySlower = 0;	// Unaligned read is probably slower than alignment shift
+		constexpr int unknown = 1;
+		constexpr int probablyFaster = 2;	// Unaligned read is probably faster than alignment shift
+	}
+
+	namespace store256FasterRetVals
+	{
+		constexpr int thirtyTwoBytesMemoryWriteSlowerOrAVXNotSupported = 0;
+		constexpr int unknown = 1;
+		constexpr int thirtyTwoBytesMemoryWriteFaster = 2;
+	}
+
+	namespace PhysicalSeedReturnValues
+	{
+		constexpr int failureOrNoSuitableInstructionAvailable = 0;
+		constexpr int noPhysicalRNGUsedTSCInstead = 1;
+		constexpr int usedVIAPhysicalRNG = 2;
+		constexpr int usedIntelRNG = 3;
+		constexpr int usedIntelSeedGenerator = 4;
 	}
 }

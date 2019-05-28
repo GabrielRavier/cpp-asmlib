@@ -207,4 +207,8 @@ extern "C"
 	void strtolowerGeneric(char *str);
 	void strtoupperSSE42(char *str);
 	void strtolowerSSE42(char *str);
+	size_t strspnGeneric(const char *string, const char *set);
+	size_t strcspnGeneric(const char *string, const char *set);
+	size_t strspnSSE42(const char *string, const char *set);
+	size_t strcspnSSE42(const char *string, const char *set);
 }

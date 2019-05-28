@@ -1,7 +1,6 @@
 #include "asmlib.h"
 #include "asmlib-internal.h"
-#include <cassert>
-#include <cstdlib>
+#include <iostream>
 #include <vector>
 #include <functional>
 
@@ -27,15 +26,34 @@ inline uint32_t popcountReference(uint32_t x)
 	return naivePopcount(x);
 }
 
+[[noreturn]] inline void popcountError(uint32_t expectedResult, uint32_t falseResult, uint32_t testedVal, const char *funcName)
+{
+	std::cout << "ERROR : " << funcName << '(' << testedVal << ") != popcountReference(" << testedVal << ") !\n"
+	<< funcName << '(' << testedVal << ") = " << falseResult << "\n"
+	"popcountReference(" << testedVal << ") = " << expectedResult << '\n';
+	std::quick_exit(1);
+}
+
+inline auto getAvailablePopcountFunctions()
+{
+	std::vector<std::pair<std::function<uint32_t(uint32_t)>, const char *>> availableFuncs{{popcountGeneric, "popcountGeneric"}};
+	if (InstructionSet() >= 9)
+		availableFuncs.push_back({popcountSSE42, "popcountSSE42"});
+
+	return availableFuncs;
+}
+
 int main()
 {
-	std::vector<std::function<uint32_t(uint32_t)>> availableFuncs{popcountGeneric};
-	if (InstructionSet() >= 9)
-		availableFuncs.push_back(popcountSSE42);
 
 	uint32_t testedVals[] = {1, 0, 54, 23, 64, 87, 0xFFFFFFFF, 0x80000000, 0x23984823, 4921904, 12345, 33, 0xF0F0F0F0, 0x55555555, 0x33333333, 0xF0F0F0F};
 
-	for (auto i : testedVals)
-		for (auto func : availableFuncs)
-			assert(func(i) == popcountReference(i));
+	for (auto func : getAvailablePopcountFunctions())
+		for (auto i : testedVals)
+		{
+			auto reportedResult = func.first(i);
+			auto expectedResult = popcountReference(i);
+			if (reportedResult != expectedResult)
+				popcountError(expectedResult, reportedResult, i, func.second);
+		}
 }

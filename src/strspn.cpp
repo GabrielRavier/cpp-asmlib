@@ -60,7 +60,7 @@ extern "C" size_t strcspnSSE42(const char *string, const char *set)
 				if (_mm_cmpistrs(currentSetBytes, currentStringBytes, 0b110000))
 				{
 					sseSet = (const __m128i *)set;
-					resultBitMask |= tmpResultBitMask;
+					resultBitMask &= tmpResultBitMask;
 					break;
 				}
 				resultBitMask |= tmpResultBitMask;
@@ -77,9 +77,11 @@ extern "C" size_t strcspnSSE42(const char *string, const char *set)
 extern "C" size_t strspnGeneric(const char *string, const char *set)
 {
 	auto startStringPtr = string;
+	auto startSetPtr = set;
 
 	while (1)
 	{
+		set = startSetPtr;
 		auto currentStringCharacter = *string;
 		if (!currentStringCharacter)
 			return string - startStringPtr;
@@ -100,9 +102,11 @@ extern "C" size_t strspnGeneric(const char *string, const char *set)
 extern "C" size_t strcspnGeneric(const char *string, const char *set)
 {
 	auto startStringPtr = string;
+	auto startSetPtr = set;
 
 	while (1)
 	{
+		set = startSetPtr;
 		auto currentStringCharacter = *string;
 		if (!currentStringCharacter)
 			return string - startStringPtr;

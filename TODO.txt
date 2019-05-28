@@ -1,8 +1,6 @@
 A_strcpy: A_memcpy
 A_strcat: A_memcpy
 A_substring: A_memcpy
-A_strspn:
-A_strcspn:
 mother:
 divfixedv:
 A_memcmp:

@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstddef>
 #include <x86intrin.h>
 
@@ -8,7 +9,7 @@ static uint32_t getByteIndex(const __m128i *sseStr)
 	return _mm_movemask_epi8(_mm_cmpeq_epi8(_mm_load_si128(sseStr), _mm_setzero_si128()));
 }
 
-size_t strlenSSE2(const char *str)
+extern "C" size_t strlenSSE2(const char *str)
 {
 	const __m128i *sseStr = (const __m128i *)str;	// Get pointer to string
 	uintptr_t misalignment = (uintptr_t)str;	// Copy pointer
@@ -16,19 +17,19 @@ size_t strlenSSE2(const char *str)
 	misalignment &= 0xF;	// Lower 4 bits indicate misalignment
 	sseStr = (const __m128i *)((uintptr_t)sseStr & -0x10);	// Align pointer by 16
 
-	uint32_t byteIndex = __builtin_ctz((getByteIndex(sseStr) >> misalignment) << misalignment);	// Find first 1-bit, shifting out bad bits to avoid falsely reading random stuff as end of string
+	uint32_t byteIndex = asmlibInternal::bsf((getByteIndex(sseStr) >> misalignment) << misalignment);	// Find first 1-bit, shifting out bad bits to avoid falsely reading random stuff as end of string
 
 	while (!byteIndex)
 	{
 		++sseStr;	// Increment pointer by 16
-		byteIndex = __builtin_ctz(getByteIndex(sseStr));	// Find first 1-bit
+		byteIndex = asmlibInternal::bsf(getByteIndex(sseStr));	// Find first 1-bit
 	}
 
 	// Zero-byte found, compute string length
 	return ((const char *)sseStr - str) + byteIndex;	// Add byte index
 }
 
-size_t strlen386(const char *str)
+extern "C" size_t strlen386(const char *str)
 {
 	uint32_t *u32Str = (uint32_t *)str;
 	uint32_t mask = 0;	// Make sure we don't use mask uninitialized
@@ -57,7 +58,7 @@ size_t strlen386(const char *str)
 		mask = ((currentBytes - 0x01010101) & ~currentBytes) & 0x80808080;
 	}
 
-	auto byteIndex = (uint32_t)__builtin_ctz(mask) >> 3; // Find right-most 1-bits and divide by 8 : byte index
+	auto byteIndex = (uint32_t)asmlibInternal::bsf(mask) >> 3; // Find right-most 1-bits and divide by 8 : byte index
 	return ((const char *)u32Str - str) + byteIndex;	// Subtract start address and add index
 }
 

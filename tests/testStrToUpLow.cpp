@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstddef>
 #include <cstring>
 #include <iostream>
@@ -13,11 +14,6 @@
 	std::cerr << "Error while making \"" << str << "\" upper/lower case : Expected \"" << correctResult << "\", but got \"" << falseResult << "\" !\n";
 	std::quick_exit(1);
 }
-
-void strtoupperGeneric(char *str);
-void strtolowerGeneric(char *str);
-void strtoupperSSE42(char *str);
-void strtolowerSSE42(char *str);
 
 static auto getAvailableStrToUpLowFunctions()
 {

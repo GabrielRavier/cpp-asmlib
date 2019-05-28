@@ -46,6 +46,11 @@ namespace asmlibInternal
 #endif
 	}
 
+	inline int32_t bsf(int32_t x)
+	{
+		return __builtin_ctz(x);
+	}
+
 	inline int32_t bsr(int32_t x)
 	{
 		return 31 - __builtin_clz(x);
@@ -188,4 +193,18 @@ extern "C"
 {
 	uint32_t popcountSSE42(uint32_t x);
 	uint32_t popcountGeneric(uint32_t x);
+	int strcmpGeneric(const char *str1, const char *str2);
+	int strcmpSSE42(const char *str1, const char *str2);
+	size_t strCountInSetGeneric(const char *str, const char *set);
+	size_t strCountInSetSSE42(const char *str, const char *set);
+	size_t strcount_UTF8SSE42(const char *str);
+	size_t strcount_UTF8Generic(const char *str);
+	size_t strlen386(const char *str);
+	size_t strlenSSE2(const char *str);
+	char *strstrGeneric(char *haystack, const char *needle);
+	char *strstrSSE42(char *haystack, const char *needle);
+	void strtoupperGeneric(char *str);
+	void strtolowerGeneric(char *str);
+	void strtoupperSSE42(char *str);
+	void strtolowerSSE42(char *str);
 }

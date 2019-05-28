@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 #include <vector>
 #include <functional>
@@ -9,9 +10,6 @@
 	std::cerr << "Error when comparing \"" << str1 << "\" and \"" << str2 << "\" : Got " << falseResult << " instead of " << expectedResult << " !\n";
 	std::quick_exit(1);
 }
-
-int strcmpGeneric(const char *str1, const char *str2);
-int strcmpSSE42(const char *str1, const char *str2);
 
 static auto getAvailableStrcmpFunctions()
 {

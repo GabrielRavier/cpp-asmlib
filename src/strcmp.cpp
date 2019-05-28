@@ -1,8 +1,8 @@
 #include "asmlib.h"
 #include <smmintrin.h>
 
-int strcmpSSE42(const char *str1, const char *str2) __attribute__((target("sse4.2")));
-int strcmpSSE42(const char *str1, const char *str2)
+extern "C" int strcmpSSE42(const char *str1, const char *str2) __attribute__((target("sse4.2")));
+extern "C" int strcmpSSE42(const char *str1, const char *str2)
 {
 	const __m128i *sseStr1 = (const __m128i *)str1;
 	const __m128i *sseStr2 = (const __m128i *)str2;
@@ -26,7 +26,7 @@ int strcmpSSE42(const char *str1, const char *str2)
 	}
 }
 
-int strcmpGeneric(const char *str1, const char *str2)
+extern "C" int strcmpGeneric(const char *str1, const char *str2)
 {
 	while (1)
 	{

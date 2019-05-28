@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstddef>
 #include <cstring>
 #include <iostream>
@@ -10,9 +11,6 @@
 	std::cerr << "Error while computing length of \"" << str << "\" : Expected " << correctResult << ", but got " << falseResult << " !\n";
 	std::quick_exit(1);
 }
-
-size_t strlen386(const char *str);
-size_t strlenSSE2(const char *str);
 
 static auto getAvailableStrlenFunctions()
 {

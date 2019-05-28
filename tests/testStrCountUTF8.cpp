@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -11,9 +12,6 @@
 		"Actual length was " << actualLength << '\n';
 	std::quick_exit(1);
 }
-
-size_t strcount_UTF8SSE42(const char *str);
-size_t strcount_UTF8Generic(const char *str);
 
 static std::vector<std::function<size_t(const char *)>> getUTF8Funcs()
 {

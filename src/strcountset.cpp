@@ -1,8 +1,8 @@
 #include "asmlib.h"
 #include <smmintrin.h>
 
-size_t strCountInSetSSE42(const char *str, const char *set) __attribute__((target("sse4.2")));
-size_t strCountInSetSSE42(const char *str, const char *set)
+extern "C" size_t strCountInSetSSE42(const char *str, const char *set) __attribute__((target("sse4.2")));
+extern "C" size_t strCountInSetSSE42(const char *str, const char *set)
 {
 	const __m128i *sseStr = (const __m128i *)str;
 	const __m128i *sseSetIterator = (const __m128i *)set;
@@ -46,7 +46,7 @@ set_extends:
 	goto set_finished;
 }
 
-size_t strCountInSetGeneric(const char *str, const char *set)
+extern "C" size_t strCountInSetGeneric(const char *str, const char *set)
 {
 	auto setIt = set;
 	size_t matchCounter = 0;	// Match counter

@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <immintrin.h>
 #include <smmintrin.h>
 
@@ -7,8 +8,8 @@ template <typename T> T btr(T x, unsigned offset)
 	return x & ~((T)1 << offset);
 }
 
-char *strstrSSE42(char *haystack, const char *needle) __attribute__((target("sse4.2")));
-char *strstrSSE42(char *haystack, const char *needle)
+extern "C" char *strstrSSE42(char *haystack, const char *needle) __attribute__((target("sse4.2")));
+extern "C" char *strstrSSE42(char *haystack, const char *needle)
 {
 	auto sseHaystack = (const __m128i *)haystack;
 	auto sseNeedle = (const __m128i *)needle;
@@ -22,13 +23,13 @@ char *strstrSSE42(char *haystack, const char *needle)
 		if (_mm_cmpistrc(firstNeedleBytes, alignedHaystackBytes, 0b1100))	// Found beginning of a match
 		{
 			if (_mm_cmpistrz(firstNeedleBytes, alignedHaystackBytes, 0b1100))	// Haystack ends here, a short match is found
-				return (char *)sseHaystack + __builtin_ctz(_mm_cvtsi128_si32(mask));	// Match found within single paragraph, add index of first match
+				return (char *)sseHaystack + asmlibInternal::bsf(_mm_cvtsi128_si32(mask));	// Match found within single paragraph, add index of first match
 
 			auto convertedMask = _mm_cvtsi128_si32(mask);	// Bit mask of possible matches
 
 			do
 			{
-				size_t indexOfPossibleMatch = __builtin_ctz(convertedMask);	// Index of first bit in mask of possible matches
+				size_t indexOfPossibleMatch = asmlibInternal::bsf(convertedMask);	// Index of first bit in mask of possible matches
 
 				auto sseHaystackIterator = (const __m128i *)((const char *)sseHaystack + indexOfPossibleMatch);	// Haystack + index
 				auto sseNeedleIterator = sseNeedle;
@@ -64,7 +65,7 @@ char *strstrSSE42(char *haystack, const char *needle)
 	}
 }
 
-char *strstrGeneric(char *haystack, const char *needle)
+extern "C" char *strstrGeneric(char *haystack, const char *needle)
 {
 	if (!needle[0])
 		return haystack;	// A 0-length needle is always found

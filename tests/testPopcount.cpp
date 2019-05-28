@@ -27,8 +27,6 @@ inline uint32_t popcountReference(uint32_t x)
 	return naivePopcount(x);
 }
 
-
-
 int main()
 {
 	std::vector<std::function<uint32_t(uint32_t)>> availableFuncs{popcountGeneric};

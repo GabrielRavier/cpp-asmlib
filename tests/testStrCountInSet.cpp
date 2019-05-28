@@ -1,11 +1,9 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 #include <functional>
 #include <vector>
 #include <tuple>
-
-size_t strCountInSetGeneric(const char *str, const char *set);
-size_t strCountInSetSSE42(const char *str, const char *set);
 
 static std::vector<std::function<size_t(const char *, const char *)>> getAvailableStrCountInSetFunctions()
 {

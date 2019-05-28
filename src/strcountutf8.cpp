@@ -14,8 +14,8 @@ constexpr uint8_t byteRangeData[16] =
 	0b10000000, 0b10111111
 };
 
-size_t strcount_UTF8SSE42(const char *str) __attribute__((target("sse4.2")));
-size_t strcount_UTF8SSE42(const char *str)
+extern "C" size_t strcount_UTF8SSE42(const char *str) __attribute__((target("sse4.2")));
+extern "C" size_t strcount_UTF8SSE42(const char *str)
 {
 	const __m128i *sseStr = (const __m128i *)str;
 	const __m128i byteRange = _mm_load_si128((const __m128i *)byteRangeData);	// Range of continuation bytes to ignore
@@ -32,7 +32,7 @@ size_t strcount_UTF8SSE42(const char *str)
 	}
 }
 
-size_t strcount_UTF8Generic(const char *str)
+extern "C" size_t strcount_UTF8Generic(const char *str)
 {
 	size_t characterCount = 0;
 

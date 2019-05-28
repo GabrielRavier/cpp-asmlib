@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <iostream>
 #include <vector>
 #include <functional>
@@ -9,9 +10,6 @@
 	std::cerr << "Error when searching for \"" << needle << "\" in \"" << haystack << "\" : Got " << falseResult - haystack << " instead of " << expectedResult - haystack << " !\n";
 	std::quick_exit(1);
 }
-
-char *strstrGeneric(char *haystack, const char *needle);
-char *strstrSSE42(char *haystack, const char *needle);
 
 static auto getAvailableStrstrFunctions()
 {

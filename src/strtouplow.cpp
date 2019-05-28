@@ -33,8 +33,8 @@ constexpr char bitToChange[16] =
 	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20
 };
 
-static void strToGenericSSE42(char *string, __m128i range, __m128i bitToChange) __attribute((target("sse4.2")));
-static void strToGenericSSE42(char *string, __m128i range, __m128i bitToChange)
+inline void strToGenericSSE42(char *string, __m128i range, __m128i bitToChange) __attribute((target("sse4.2")));
+inline void strToGenericSSE42(char *string, __m128i range, __m128i bitToChange)
 {
 	auto sseString = (__m128i *)string;
 
@@ -105,17 +105,17 @@ static void strToGenericSSE42(char *string, __m128i range, __m128i bitToChange)
 
 }
 
-void strtolowerSSE42(char *string)
+extern "C" void strtolowerSSE42(char *string)
 {
 	strToGenericSSE42(string, _mm_load_si128((const __m128i *)upperCaseRange), _mm_load_si128((const __m128i *)bitToChange));
 }
 
-void strtoupperSSE42(char *string)
+extern "C" void strtoupperSSE42(char *string)
 {
 	strToGenericSSE42(string, _mm_load_si128((const __m128i *)lowerCaseRange), _mm_load_si128((const __m128i *)bitToChange));
 }
 
-static void strToGenericGeneric(char *string, char othercaseA, char othercaseZ, char convertedToCaseA)
+extern "C" void strToGenericGeneric(char *string, char othercaseA, char othercaseZ, char convertedToCaseA)
 {
 	while (1)
 	{
@@ -135,12 +135,12 @@ static void strToGenericGeneric(char *string, char othercaseA, char othercaseZ, 
 	}
 }
 
-void strtolowerGeneric(char *string)
+extern "C" void strtolowerGeneric(char *string)
 {
 	strToGenericGeneric(string, 'A', 'Z', 'a');
 }
 
-void strtoupperGeneric(char *string)
+extern "C" void strtoupperGeneric(char *string)
 {
 	strToGenericGeneric(string, 'a', 'z', 'A');
 }

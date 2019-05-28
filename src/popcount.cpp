@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <smmintrin.h>
 
 extern "C" uint32_t popcountSSE42(uint32_t x) __attribute__((target("popcnt")));
@@ -35,15 +36,15 @@ extern "C" uint32_t popcountGeneric(uint32_t x)
 }
 
 
-static uint32_t popcountCPUDispath(uint32_t x);
-static auto popcountDispatch = popcountCPUDispath;
+static uint32_t popcountCPUDispatch(uint32_t x);
+static auto popcountDispatch = popcountCPUDispatch;
 
-static uint32_t popcountCPUDispath(uint32_t x)
+static uint32_t popcountCPUDispatch(uint32_t x)
 {
 	int instructionSet = InstructionSet();
 	auto result = popcountGeneric;
 
-	if (instructionSet >= 9)
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::popcntSupported)
 		result = popcountSSE42;
 
 	popcountDispatch = result;

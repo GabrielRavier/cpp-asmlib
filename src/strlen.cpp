@@ -70,7 +70,7 @@ static size_t strlenCPUDispatch(const char *str)
 	auto instructionSet = InstructionSet();
 	strlenDispatch = strlen386;
 
-	if (instructionSet >= 4)
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse2Supported)
 		strlenDispatch = strlenSSE2;
 
 	return strlenDispatch(str);

@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <smmintrin.h>
 
 extern "C" int strcmpSSE42(const char *str1, const char *str2) __attribute__((target("sse4.2")));
@@ -51,7 +52,7 @@ static int strcmpCPUDispatch(const char *str1, const char *str2)
 	auto instructionSet = InstructionSet();
 	auto result = strcmpGeneric;
 
-	if (instructionSet >= 10)
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result = strcmpSSE42;
 
 	strcmpDispatch = result;

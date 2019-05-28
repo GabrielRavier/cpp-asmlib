@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <smmintrin.h>
 
 extern "C" size_t strCountInSetSSE42(const char *str, const char *set) __attribute__((target("sse4.2")));
@@ -79,7 +80,7 @@ static size_t strCountInSetCPUDispath(const char *str, const char *set)
 	int instructionSet = InstructionSet();
 	auto result = strCountInSetGeneric;
 
-	if (instructionSet >= 9)
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result = strCountInSetSSE42;
 
 	strCountInSetDispatch = result;

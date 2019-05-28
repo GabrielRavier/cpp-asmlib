@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <cstdint>
 #include <smmintrin.h>
 
@@ -59,7 +60,7 @@ static size_t strcount_UTF8CPUDispatch(const char* str)
 	auto instructionSet = InstructionSet();
 	auto dispatch = strcount_UTF8Generic;
 
-	if (instructionSet >= 10)	// SSE4.2 supported
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse42Supported)	// SSE4.2 supported
 		dispatch = strcount_UTF8SSE42;
 
 	strcount_UTF8Dispatch = dispatch;

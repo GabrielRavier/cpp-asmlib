@@ -128,7 +128,7 @@ static char *strstrCPUDispatch(char *haystack, const char *needle)
 	int instructionSet = InstructionSet();
 	auto result = strstrGeneric;
 
-	if (instructionSet >= 10)
+	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result = strstrSSE42;
 
 	strstrDispatch = result;

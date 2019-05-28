@@ -1,4 +1,5 @@
 #include "asmlib.h"
+#include "asmlib-internal.h"
 #include <smmintrin.h>
 
 // Range for lowercase
@@ -167,7 +168,7 @@ static void strtoupperCPUDispatch(char *string)
 {
 	auto result = strtoupperGeneric;
 
-	if (InstructionSet() >= 10)
+	if (InstructionSet() >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result = strtoupperSSE42;
 
 	strtoupperDispatch = result;

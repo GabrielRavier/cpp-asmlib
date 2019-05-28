@@ -72,10 +72,10 @@ extern "C" size_t strCountInSetGeneric(const char *str, const char *set)
 	return matchCounter;
 }
 
-static size_t strCountInSetCPUDispath(const char *str, const char *set);
-auto strCountInSetDispatch = strCountInSetCPUDispath;
+static size_t strCountInSetCPUDispatch(const char *str, const char *set);
+auto strCountInSetDispatch = strCountInSetCPUDispatch;
 
-static size_t strCountInSetCPUDispath(const char *str, const char *set)
+static size_t strCountInSetCPUDispatch(const char *str, const char *set)
 {
 	int instructionSet = InstructionSet();
 	auto result = strCountInSetGeneric;

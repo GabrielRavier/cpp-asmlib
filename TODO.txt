@@ -1,7 +1,6 @@
 A_strcpy: A_memcpy
 A_strcat: A_memcpy
 A_substring: A_memcpy
-AddLikelyUnlikely:
 divfixedv:
 A_memcmp:
 A_memset:

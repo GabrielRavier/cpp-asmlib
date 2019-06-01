@@ -1,7 +1,8 @@
 A_strcpy: A_memcpy
 A_strcat: A_memcpy
 A_substring: A_memcpy
-mother:
+FlushCoutInTests:
+AddLikelyUnlikely:
 divfixedv:
 A_memcmp:
 A_memset:

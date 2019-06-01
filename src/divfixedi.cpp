@@ -14,15 +14,7 @@ extern "C" void setdivisori32(int32_t buffer[2], int32_t d)
 
 	shiftCount = std::max(shiftCount, 0);	// Avoid negative shift count
 
-	union
-	{
-		struct
-		{
-			uint32_t low;
-			uint32_t high;
-		};
-		uint64_t all;
-	} dividend;
+	asmlibInternal::uint64Elements dividend;
 
 	int32_t multiplier = 0;
 	dividend.low = 0;
@@ -41,15 +33,7 @@ extern "C" void setdivisori32(int32_t buffer[2], int32_t d)
 
 extern "C" int32_t dividefixedi32(const int32_t buffer[2], int32_t x)
 {
-	union
-	{
-		struct
-		{
-			int32_t low;
-			int32_t high;
-		};
-		int64_t all;
-	} multResult;
+	asmlibInternal::int64Elements multResult;
 	multResult.all = (int64_t)x * buffer[0];
 
 	int32_t tmp = x + multResult.high;
@@ -68,15 +52,7 @@ extern "C" void setdivisoru32(uint32_t buffer[2], uint32_t d)
 
 	++L;	// L = ceil(log2(d))
 
-	union
-	{
-		struct
-		{
-			uint32_t low;
-			uint32_t high;
-		};
-		uint64_t all;
-	} dividend;
+	asmlibInternal::uint64Elements dividend;
 
 	dividend.high = (uint64_t)1 << (uint8_t)L;	// 2^L (64 bit shift because L may be 32)
 	dividend.high -= d;
@@ -92,15 +68,7 @@ extern "C" void setdivisoru32(uint32_t buffer[2], uint32_t d)
 
 extern "C" uint32_t dividefixedu32(const uint32_t buffer[2], uint32_t x)
 {
-	union
-	{
-		struct
-		{
-			uint32_t low;
-			uint32_t high;
-		};
-		uint64_t all;
-	} multResult;
+	asmlibInternal::uint64Elements multResult;
 	multResult.all = (uint64_t)x * buffer[0];
 
 	uint32_t shifts = buffer[1];

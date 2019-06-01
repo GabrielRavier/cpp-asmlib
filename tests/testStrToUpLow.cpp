@@ -9,13 +9,14 @@
 #include <string>
 #include <string_view>
 
-[[noreturn]] static void strToUpLowError(const char *str, std::string_view falseResult, const char *correctResult)
+[[noreturn]] inline void strToUpLowError(const char *str, std::string_view falseResult, const char *correctResult)
 {
 	std::cerr << "Error while making \"" << str << "\" upper/lower case : Expected \"" << correctResult << "\", but got \"" << falseResult << "\" !\n";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
-static auto getAvailableStrToUpLowFunctions()
+inline auto getAvailableStrToUpLowFunctions()
 {
 	std::vector<std::pair<std::function<void(char *)>, std::function<void(char *)>>> result = {{strtoupperGeneric, strtolowerGeneric}};
 

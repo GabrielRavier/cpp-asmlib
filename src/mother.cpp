@@ -130,7 +130,7 @@ extern "C" void MotRandomInit(void *pThis, int seed)
 	pInternals->mCarry = seed;
 
 	// Randomize some more
-	for (size_t i = 20; i; --i)
+	for (size_t i = 0; i < 20; ++i)
 		MotherInternalGenerate(pInternals);
 }
 

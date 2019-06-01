@@ -7,18 +7,18 @@ using namespace asmlibInternal::randomNumberGenerators;
 
 [[noreturn]] inline void motherSizeError()
 {
-	std::cout << "ERROR : sizeof(mother::internals) != MOTHER_BUFFERSIZE !";
-	std::cout.flush();
+	std::cerr << "ERROR : sizeof(mother::internals) != MOTHER_BUFFERSIZE !";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
 [[noreturn]] inline void motherCheckError(uint32_t asmResult, uint32_t cppResult, uint32_t staticResult, size_t i)
 {
-	std::cout << "ERROR : On " << i << "th iteration of checking mother RNG generator results, got : \n"
+	std::cerr << "ERROR : On " << i << "th iteration of checking mother RNG generator results, got : \n"
 	"asmResult : " << asmResult << "\n"
 	"staticResult : " << staticResult << "\n"
 	"When " << cppResult << " was expected !";
-	std::cout.flush();
+	std::cerr.flush();
 
 	std::quick_exit(1);
 }

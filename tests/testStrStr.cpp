@@ -5,13 +5,14 @@
 #include <functional>
 #include <cstring>
 
-[[noreturn]] static void strstrError(const char *haystack, const char *needle, const char *expectedResult, const char * falseResult)
+[[noreturn]] inline void strstrError(const char *haystack, const char *needle, const char *expectedResult, const char * falseResult)
 {
 	std::cerr << "Error when searching for \"" << needle << "\" in \"" << haystack << "\" : Got " << falseResult - haystack << " instead of " << expectedResult - haystack << " !\n";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
-static auto getAvailableStrstrFunctions()
+inline auto getAvailableStrstrFunctions()
 {
 	std::vector<std::function<const char *(char *, const char *)>> result = {strstrGeneric};
 

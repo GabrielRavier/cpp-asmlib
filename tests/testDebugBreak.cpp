@@ -7,13 +7,13 @@
 inline void sigtrapHandler(int /* sigNum */)
 {
 	std::cout << "A_DebugBreak successfully raised a SIGTRAP !\n";
-	std::quick_exit(0);
+	std::exit(0);
 }
 
 inline void sigabrtHandler(int /* sigNum */)
 {
 	std::cout << "A_DebugBreak successfully raised a SIGABRT !\n";
-	std::quick_exit(0);
+	std::exit(0);
 }
 
 int main()
@@ -22,7 +22,8 @@ int main()
 	signal(SIGABRT, sigabrtHandler);
 	A_DebugBreak();	// Should emit a SIGTRAP
 
-	std::cout << "ERROR : A_DebugBreak did not raise SIGTRAP or SIGABRT !\n";
+	std::cerr << "ERROR : A_DebugBreak did not raise SIGTRAP or SIGABRT !\n";
+	std::cerr.flush();
 
-	return 1;
+	std::quick_exit(1);
 }

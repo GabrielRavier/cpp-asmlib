@@ -5,12 +5,13 @@
 
 template <typename T> [[noreturn]] void divFixedError(T dividend, T divisor, T expectedResult, T falseResult)
 {
-	std::cout << "divFixed failed to give correct results !\n"
+	std::cerr << "divFixed failed to give correct results !\n"
 			<< "Dividend : " << dividend << "\n"
 			"Divisor : " << divisor << "\n"
 			"Expected result : " << expectedResult << "\n"
 			"False result : " << falseResult << '\n';
-	exit(1);
+	std::cerr.flush();
+	std::quick_exit(1);
 }
 
 int main()

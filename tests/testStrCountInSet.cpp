@@ -5,7 +5,7 @@
 #include <vector>
 #include <tuple>
 
-static std::vector<std::function<size_t(const char *, const char *)>> getAvailableStrCountInSetFunctions()
+inline std::vector<std::function<size_t(const char *, const char *)>> getAvailableStrCountInSetFunctions()
 {
 	std::vector<std::function<size_t(const char *, const char *)>> result = {strCountInSetGeneric};
 
@@ -15,9 +15,10 @@ static std::vector<std::function<size_t(const char *, const char *)>> getAvailab
 	return result;
 }
 
-[[noreturn]] void strCountInSetError(size_t expectedResult, size_t falseResult, const char *testStr, const char *testSet)
+[[noreturn]] inline void strCountInSetError(size_t expectedResult, size_t falseResult, const char *testStr, const char *testSet)
 {
-	std::cout << "ERROR : strCountInSet found " << falseResult << " elements of \"" << testSet << "\" in \"" << testStr << "\" when it should have found " << expectedResult << " !\n";
+	std::cerr << "ERROR : strCountInSet found " << falseResult << " elements of \"" << testSet << "\" in \"" << testStr << "\" when it should have found " << expectedResult << " !\n";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 

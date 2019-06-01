@@ -28,9 +28,10 @@ inline uint32_t popcountReference(uint32_t x)
 
 [[noreturn]] inline void popcountError(uint32_t expectedResult, uint32_t falseResult, uint32_t testedVal, const char *funcName)
 {
-	std::cout << "ERROR : " << funcName << '(' << testedVal << ") != popcountReference(" << testedVal << ") !\n"
+	std::cerr << "ERROR : " << funcName << '(' << testedVal << ") != popcountReference(" << testedVal << ") !\n"
 	<< funcName << '(' << testedVal << ") = " << falseResult << "\n"
 	"popcountReference(" << testedVal << ") = " << expectedResult << '\n';
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 

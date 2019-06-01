@@ -10,9 +10,10 @@
 [[noreturn]] inline void strspnError(size_t expectedResult, size_t falseResult, const char *string, const char *set, const char *functionName, const char *stdlibFuncName)
 {
 	auto parametersString = std::string("(\"") + string + "\", \"" + set + "\")";
-	std::cout << "ERROR : " << stdlibFuncName << parametersString << " != " << functionName << parametersString << " !\n"
+	std::cerr << "ERROR : " << stdlibFuncName << parametersString << " != " << functionName << parametersString << " !\n"
 	<< stdlibFuncName << parametersString << " = " << expectedResult << '\n'
 	<< functionName << parametersString << " = " << falseResult << '\n';
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 

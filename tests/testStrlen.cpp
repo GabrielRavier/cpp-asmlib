@@ -6,13 +6,14 @@
 #include <functional>
 #include <vector>
 
-[[noreturn]] static void strlenError(const char *str, size_t correctResult, size_t falseResult)
+[[noreturn]] inline void strlenError(const char *str, size_t correctResult, size_t falseResult)
 {
 	std::cerr << "Error while computing length of \"" << str << "\" : Expected " << correctResult << ", but got " << falseResult << " !\n";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
-static auto getAvailableStrlenFunctions()
+inline auto getAvailableStrlenFunctions()
 {
 	std::vector<std::function<size_t(const char *)>> result = {strlen386};
 

@@ -5,15 +5,16 @@
 #include <vector>
 #include <functional>
 
-[[noreturn]] static void strCountError(const char *str, size_t actualLength, size_t falseLength)
+[[noreturn]] inline void strCountError(const char *str, size_t actualLength, size_t falseLength)
 {
-	std::cout << "ERROR : False length returned for \"" << str << "\"!\n"
+	std::cerr << "ERROR : False length returned for \"" << str << "\"!\n"
 		"Reported length was " << falseLength << "\n"
 		"Actual length was " << actualLength << '\n';
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
-static std::vector<std::function<size_t(const char *)>> getUTF8Funcs()
+inline std::vector<std::function<size_t(const char *)>> getUTF8Funcs()
 {
 	std::vector<std::function<size_t(const char *)>> result = {strcount_UTF8Generic};
 

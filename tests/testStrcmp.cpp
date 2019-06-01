@@ -5,13 +5,14 @@
 #include <functional>
 #include <cstring>
 
-[[noreturn]] static void strcmpError(const char *str1, const char *str2, int expectedResult, int falseResult)
+[[noreturn]] inline void strcmpError(const char *str1, const char *str2, int expectedResult, int falseResult)
 {
 	std::cerr << "Error when comparing \"" << str1 << "\" and \"" << str2 << "\" : Got " << falseResult << " instead of " << expectedResult << " !\n";
+	std::cerr.flush();
 	std::quick_exit(1);
 }
 
-static auto getAvailableStrcmpFunctions()
+inline auto getAvailableStrcmpFunctions()
 {
 	std::vector<std::function<int(const char *, const char *)>> result = {strcmpGeneric};
 

@@ -44,6 +44,8 @@ inline uint32_t MotherInternalGenerate(mother::internals *pThis)
 	}
 	else
 	{
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Waddress-of-packed-member"
 		// SSE2 version
 		auto returnValue = pThis->m0;	// Retrieve previous random number
 		auto m3m2m1m0 = _mm_load_si128((__m128i *)&pThis->m3);	// Load m3, m2, m1 and m0
@@ -64,6 +66,7 @@ inline uint32_t MotherInternalGenerate(mother::internals *pThis)
 		converter.asInt.all = _mm_cvtsi128_si64(convertedToDouble);
 		pThis->ranP1 = converter.asDouble;
 		return returnValue;
+#pragma GCC diagnostic pop
 	}
 }
 

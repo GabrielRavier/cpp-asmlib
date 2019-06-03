@@ -6,19 +6,20 @@
 #include <functional>
 #include <vector>
 
-[[noreturn]] inline void strlenError(const char *str, size_t correctResult, size_t falseResult)
+[[noreturn]] inline void strlenError(const char *str, size_t correctResult, size_t falseResult, const char *funcName)
 {
-	std::cerr << "Error while computing length of \"" << str << "\" : Expected " << correctResult << ", but got " << falseResult << " !\n";
+	std::cerr << "Error while computing length of \"" << str << "\" : Expected " << correctResult << ", but got " << falseResult << " !\n"
+	"Was using " << funcName << " function";
 	std::cerr.flush();
 	std::quick_exit(1);
 }
 
 inline auto getAvailableStrlenFunctions()
 {
-	std::vector<std::function<size_t(const char *)>> result = {strlen386};
+	std::vector<std::pair<std::function<size_t(const char *)>, const char *>> result = {{strlen386, "strlen386"}};
 
 	if (InstructionSet() >= 4)
-		result.push_back(strlenSSE2);
+		result.push_back({strlenSSE2, "strlenSSE2"});
 
 	return result;
 }
@@ -40,11 +41,11 @@ int main()
 	{
 		for (auto testString : testStrings)
 		{
-			auto reportedResult = strlenFunction(testString);
+			auto reportedResult = strlenFunction.first(testString);
 			auto correctResult = strlen(testString);
 
 			if (reportedResult != correctResult)
-				strlenError(testString, correctResult, reportedResult);
+				strlenError(testString, correctResult, reportedResult, strlenFunction.second);
 		}
 
 		// Test a random string but byte by byte
@@ -53,10 +54,10 @@ int main()
 
 		for (size_t i = 0; i < testStrLen; ++i)
 		{
-			auto reportedResult = strlenFunction(testStr + i);
+			auto reportedResult = strlenFunction.first(testStr + i);
 			auto correctResult = strlen(testStr + i);
 			if (reportedResult != correctResult)
-				strlenError(testStr + i, correctResult, reportedResult);
+				strlenError(testStr + i, correctResult, reportedResult, strlenFunction.second);
 		}
 	}
 }

@@ -214,11 +214,11 @@ int PhysicalSeedNone(int seeds[], int numSeeds)
 	return asmlibInternal::PhysicalSeedReturnValues::failureOrNoSuitableInstructionAvailable;
 }
 
-static int PhysicalSeedCPUDispatch(int seeds[], int numSeeds);
+inline int PhysicalSeedCPUDispatch(int seeds[], int numSeeds);
 
 auto PhysicalSeedDispatch = PhysicalSeedCPUDispatch;
 
-static int PhysicalSeedCPUDispatch(int seeds[], int numSeeds)
+inline int PhysicalSeedCPUDispatch(int seeds[], int numSeeds)
 {
 	auto result = PhysicalSeedNone;
 	if (asmlibInternal::isCPUIDSupported())

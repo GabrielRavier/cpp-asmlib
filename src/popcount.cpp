@@ -36,10 +36,10 @@ extern "C" uint32_t popcountGeneric(uint32_t x)
 }
 
 
-static uint32_t popcountCPUDispatch(uint32_t x);
+inline uint32_t popcountCPUDispatch(uint32_t x);
 static auto popcountDispatch = popcountCPUDispatch;
 
-static uint32_t popcountCPUDispatch(uint32_t x)
+inline uint32_t popcountCPUDispatch(uint32_t x)
 {
 	int instructionSet = InstructionSet();
 	auto result = popcountGeneric;

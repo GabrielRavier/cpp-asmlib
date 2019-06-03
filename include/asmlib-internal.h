@@ -555,4 +555,6 @@ extern "C"
 	size_t strcspnGeneric(const char *string, const char *set);
 	size_t strspnSSE42(const char *string, const char *set);
 	size_t strcspnSSE42(const char *string, const char *set);
+	__m128i dividefixedV4i32SSE2(const __m128i buf[2], __m128i x);
+	__m128i dividefixedV4i32SSE41(const __m128i buf[2], __m128i x);
 }

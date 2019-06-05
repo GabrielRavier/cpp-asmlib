@@ -8,8 +8,7 @@ using namespace asmlibInternal::randomNumberGenerators;
 [[noreturn]] inline void motherSizeError()
 {
 	std::cerr << "ERROR : sizeof(mother::internals) != MOTHER_BUFFERSIZE !";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 [[noreturn]] inline void motherCheckError(uint32_t asmResult, uint32_t cppResult, uint32_t staticResult, size_t i)
@@ -18,9 +17,7 @@ using namespace asmlibInternal::randomNumberGenerators;
 	"asmResult : " << asmResult << "\n"
 	"staticResult : " << staticResult << "\n"
 	"When " << cppResult << " was expected !";
-	std::cerr.flush();
-
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 class CRandomMother                    // Encapsulate random number generator

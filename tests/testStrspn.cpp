@@ -13,8 +13,7 @@
 	std::cerr << "ERROR : " << stdlibFuncName << parametersString << " != " << functionName << parametersString << " !\n"
 	<< stdlibFuncName << parametersString << " = " << expectedResult << '\n'
 	<< functionName << parametersString << " = " << falseResult << '\n';
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailableStrspnFunctions()

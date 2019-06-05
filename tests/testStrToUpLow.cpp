@@ -12,8 +12,7 @@
 [[noreturn]] inline void strToUpLowError(const char *str, std::string_view falseResult, const char *correctResult)
 {
 	std::cerr << "Error while making \"" << str << "\" upper/lower case : Expected \"" << correctResult << "\", but got \"" << falseResult << "\" !\n";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailableStrToUpLowFunctions()

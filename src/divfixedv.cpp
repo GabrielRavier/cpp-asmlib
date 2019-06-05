@@ -16,7 +16,7 @@ inline auto setdivisor8sInternal(int16_t d)
 
 	uint32_t divResult = 0;
 	if (d != 1)
-		divResult = ((1 << (uint8_t)bsrResult) << 8) / d;
+		divResult = ((1 << (uint8_t)bsrResult) << 16) / d;
 
 	auto shiftCount = _mm_cvtsi32_si128(bsrResult);
 	return std::make_pair(_mm_unpacklo_epi64(_mm_shufflelo_epi16(_mm_cvtsi32_si128(divResult + 1), 0), shiftCount), shiftCount);
@@ -37,12 +37,12 @@ extern "C" void setdivisorV8i16(__m128i buf[2], int16_t d)
 extern "C" __m128i dividefixedV8i16(const __m128i buf[2], __m128i x)
 {
 	auto multiplied = _mm_mulhi_epi16(x, buf[0]);	// Multiply high signed words
-	auto tmp = _mm_add_epi16(multiplied, x);
-	auto shifted = _mm_srai_epi16(tmp, *(uint32_t *)&buf[1]);	// Shift right arithmetic
+	auto shifted = _mm_srai_epi16(_mm_add_epi16(multiplied, x), *(uint32_t *)&buf[1]);	// Shift right arithmetic
 	auto sign = _mm_srai_epi16(x, 15);	// Sign of x
 	return _mm_sub_epi16(shifted, sign);
 }
 
+// The stuff for u16 doesn't work properly
 inline auto setdivisor8usInternal(uint16_t d)
 {
 	int32_t bsrResult = -1;
@@ -51,7 +51,7 @@ inline auto setdivisor8usInternal(uint16_t d)
 
 	++bsrResult;	// ceil(log2(d))
 	uint32_t multiplier = 1 << (uint8_t)bsrResult;	// Multiplier
-	uint32_t divResult = (((multiplier - d) << 8) / d) + 1;
+	uint16_t divResult = (((multiplier - d) << 16) / d) + 1;
 	auto sseMultiplier = _mm_shufflelo_epi16(_mm_cvtsi32_si128(divResult), 0); // Broadcast into lower 4 words
 	auto sseShift1 = _mm_cvtsi32_si128(bsrResult >= 1);	// Shift 1
 	auto sseShift2 = _mm_cvtsi32_si128((bsrResult - 1) & (uint8_t)-(bsrResult > 1));	// Shift 2
@@ -104,20 +104,21 @@ extern "C" __m128i setdivisor4i(int32_t d)
 	return setdivisor4iInternal(d).first;
 }
 
-extern "C" void setdivisor4Vi32(__m128i buf[2], int32_t d)
+extern "C" void setdivisorV4i32(__m128i buf[2], int32_t d)
 {
 	auto setdivisor4iResult = setdivisor4iInternal(d);
 	buf[0] = _mm_unpacklo_epi64(setdivisor4iResult.first, setdivisor4iResult.first);
 	buf[1] = setdivisor4iResult.second;
 }
 
+extern "C" __m128i dividefixedV4i32SSE41(const __m128i buf[2], __m128i x) __attribute__((target("sse4.1")));
 extern "C" __m128i dividefixedV4i32SSE41(const __m128i buf[2], __m128i x)
 {
 	auto multiplier = buf[0];
-	auto multipliedX0X2 = _mm_mul_epi32(x, multiplier);	// 32 * 32 -> 64 bit unsigned multiplication of x[0] and x[2]
+	auto multipliedX0X2 = _mm_mul_epi32(x, multiplier);	// 32 * 32 -> 64 bit signed multiplication of x[0] and x[2]
 	auto multipliedX0X2HighDwords = _mm_srli_epi64(multipliedX0X2, 32);	// High dword of result 0 and 2
 	auto positionedX1X3 = _mm_srli_epi64(x, 32);	// Get x[1] and x[3] into position for multiplication
-	positionedX1X3 = _mm_mul_epi32(positionedX1X3, multiplier);	// 32 * 32 -> 64 bit unsigned multiplication of x[0] and x[2]
+	positionedX1X3 = _mm_mul_epi32(positionedX1X3, multiplier);	// 32 * 32 -> 64 bit signed multiplication of x[0] and x[2]
 	auto multiplierMask = _mm_slli_epi64(_mm_cmpeq_epi32(multiplier, multiplier), 32);	// Generate mask of dword 1 and 3
 	auto positionedX1X3HighDwords = _mm_and_si128(positionedX1X3, multiplierMask);	// High dword of result 1 and 3
 	auto combinedResults = _mm_or_si128(multipliedX0X2HighDwords, positionedX1X3HighDwords);	// Combine all four results into one vector
@@ -139,10 +140,10 @@ extern "C" __m128i dividefixedV4i32SSE2(const __m128i buf[2], __m128i x)
 	xConverter.xm128 = x;
 
 	// Do 4 signed high multiplications
-	xConverter.xi32[0] *= multiplier;
-	xConverter.xi32[1] *= multiplier;
-	xConverter.xi32[2] *= multiplier;
-	xConverter.xi32[3] *= multiplier;
+	xConverter.xi32[0] = ((uint64_t)xConverter.xi32[0] * multiplier) >> 32;
+	xConverter.xi32[1] = ((uint64_t)xConverter.xi32[1] * multiplier) >> 32;
+	xConverter.xi32[2] = ((uint64_t)xConverter.xi32[2] * multiplier) >> 32;
+	xConverter.xi32[3] = ((uint64_t)xConverter.xi32[3] * multiplier) >> 32;
 
 	auto multiplied = xConverter.xm128;
 	auto shifted = _mm_srai_epi32(_mm_add_epi32(multiplied, x), *(uint32_t *)&buf[1]);	// Shift right arithmetic

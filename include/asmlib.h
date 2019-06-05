@@ -144,7 +144,7 @@ uint32_t dividefixedu32(const uint32_t buffer[2], uint32_t x); // Fast division 
 #error Please compile with -sse2 or higher
 #endif
 
-#if defined(_INCLUDED_EMM) || (defined(_EMMINTRIN_H_INCLUDED) && defined(__SSE2__))
+#if defined(_INCLUDED_EMM) || ((defined(_EMMINTRIN_H_INCLUDED) || defined(__EMMINTRIN_H)) && defined(__SSE2__))
 #define VECTORDIVISIONDEFINED
 
 // Integer vector division functions. These functions divide an integer vector by a scalar:
@@ -161,7 +161,7 @@ __m128i dividefixedV8u16(const __m128i buf[2], __m128i x);     // Fast division 
 __m128i dividefixedV4i32(const __m128i buf[2], __m128i x);     // Fast division with previously set divisor
 __m128i dividefixedV4u32(const __m128i buf[2], __m128i x);     // Fast division with previously set divisor
 
-#endif // defined(_INCLUDED_EMM) || (defined(_EMMINTRIN_H_INCLUDED) && defined(__SSE2__))
+#endif // defined(_INCLUDED_EMM) || ((defined(_EMMINTRIN_H_INCLUDED) || defined(__EMMINTRIN_H)) && defined(__SSE2__))
 
 #ifdef __cplusplus
 }  // end of extern "C"

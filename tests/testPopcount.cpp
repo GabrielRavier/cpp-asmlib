@@ -31,8 +31,7 @@ inline uint32_t popcountReference(uint32_t x)
 	std::cerr << "ERROR : " << funcName << '(' << testedVal << ") != popcountReference(" << testedVal << ") !\n"
 	<< funcName << '(' << testedVal << ") = " << falseResult << "\n"
 	"popcountReference(" << testedVal << ") = " << expectedResult << '\n';
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailablePopcountFunctions()

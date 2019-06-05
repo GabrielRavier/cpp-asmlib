@@ -18,8 +18,7 @@ inline std::vector<std::function<size_t(const char *, const char *)>> getAvailab
 [[noreturn]] inline void strCountInSetError(size_t expectedResult, size_t falseResult, const char *testStr, const char *testSet)
 {
 	std::cerr << "ERROR : strCountInSet found " << falseResult << " elements of \"" << testSet << "\" in \"" << testStr << "\" when it should have found " << expectedResult << " !\n";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 int main()

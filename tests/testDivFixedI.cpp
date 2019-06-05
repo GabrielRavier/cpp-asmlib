@@ -10,8 +10,7 @@ template <typename T> [[noreturn]] void divFixedError(T dividend, T divisor, T e
 			"Divisor : " << divisor << "\n"
 			"Expected result : " << expectedResult << "\n"
 			"False result : " << falseResult << '\n';
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 int main()

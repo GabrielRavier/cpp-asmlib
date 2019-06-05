@@ -23,7 +23,5 @@ int main()
 	A_DebugBreak();	// Should emit a SIGTRAP
 
 	std::cerr << "ERROR : A_DebugBreak did not raise SIGTRAP or SIGABRT !\n";
-	std::cerr.flush();
-
-	std::quick_exit(1);
+	std::exit(1);
 }

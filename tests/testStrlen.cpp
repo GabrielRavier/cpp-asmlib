@@ -10,8 +10,7 @@
 {
 	std::cerr << "Error while computing length of \"" << str << "\" : Expected " << correctResult << ", but got " << falseResult << " !\n"
 	"Was using " << funcName << " function";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailableStrlenFunctions()

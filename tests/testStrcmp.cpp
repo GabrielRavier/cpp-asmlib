@@ -8,8 +8,7 @@
 [[noreturn]] inline void strcmpError(const char *str1, const char *str2, int expectedResult, int falseResult)
 {
 	std::cerr << "Error when comparing \"" << str1 << "\" and \"" << str2 << "\" : Got " << falseResult << " instead of " << expectedResult << " !\n";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailableStrcmpFunctions()

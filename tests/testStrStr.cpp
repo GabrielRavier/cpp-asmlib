@@ -8,8 +8,7 @@
 [[noreturn]] inline void strstrError(const char *haystack, const char *needle, const char *expectedResult, const char * falseResult)
 {
 	std::cerr << "Error when searching for \"" << needle << "\" in \"" << haystack << "\" : Got " << falseResult - haystack << " instead of " << expectedResult - haystack << " !\n";
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline auto getAvailableStrstrFunctions()

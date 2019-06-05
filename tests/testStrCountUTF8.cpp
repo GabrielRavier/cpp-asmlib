@@ -10,8 +10,7 @@
 	std::cerr << "ERROR : False length returned for \"" << str << "\"!\n"
 		"Reported length was " << falseLength << "\n"
 		"Actual length was " << actualLength << '\n';
-	std::cerr.flush();
-	std::quick_exit(1);
+	std::exit(1);
 }
 
 inline std::vector<std::function<size_t(const char *)>> getUTF8Funcs()

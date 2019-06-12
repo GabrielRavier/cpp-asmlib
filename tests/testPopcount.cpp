@@ -36,7 +36,7 @@ inline uint32_t popcountReference(uint32_t x)
 
 inline auto getAvailablePopcountFunctions()
 {
-	std::vector<std::pair<std::function<uint32_t(uint32_t)>, const char *>> availableFuncs{{popcountGeneric, "popcountGeneric"}};
+	std::vector<std::pair<std::function<uint32_t(uint32_t)>, const char *>> availableFuncs{{popcountGeneric, "popcountGeneric"}, {A_popcount, "A_popcount"}};
 	if (InstructionSet() >= 9)
 		availableFuncs.push_back({popcountSSE42, "popcountSSE42"});
 

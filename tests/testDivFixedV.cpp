@@ -57,7 +57,7 @@ inline auto getAvailableDivFixedV4i32Functions()
 {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
-	std::vector<std::pair<std::function<__m128i (const __m128i [2], __m128i)>, const char *>> result = {{dividefixedV4i32SSE2, "dividefixedV4i32SSE2"}};
+	std::vector<std::pair<std::function<__m128i (const __m128i [2], __m128i)>, const char *>> result = {{dividefixedV4i32SSE2, "dividefixedV4i32SSE2"}, {dividefixedV4i32, "dividefixedV4i32"}};
 #pragma GCC diagnostic pop
 
 	if (InstructionSet() >= asmlibInternal::InstructionSetReturnValues::sse41Supported)
@@ -102,7 +102,7 @@ inline void testDivFixedV4u32()
 			uint32_t expectedResult = dividend / divisor;
 			uint32_t testResult = _mm_cvtsi128_si32(dividefixedV4u32(buffer, _mm_cvtsi32_si128(dividend)));
 			if (expectedResult != testResult)
-				divFixedError(expectedResult, testResult, divisor, dividend, "dividefixedV8u16");
+				divFixedError(expectedResult, testResult, divisor, dividend, "dividefixedV8u32");
 		}
 	}
 }
@@ -110,8 +110,7 @@ inline void testDivFixedV4u32()
 int main()
 {
 	testDivFixedV8i16();
-	// This doesn't work right now, should be fixed later
-	// testDivFixedV8u16();
+	testDivFixedV8u16();
 	testDivFixedV4i32();
 	testDivFixedV4u32();
 }

@@ -15,7 +15,7 @@
 
 inline auto getAvailableStrlenFunctions()
 {
-	std::vector<std::pair<std::function<size_t(const char *)>, const char *>> result = {{strlen386, "strlen386"}};
+	std::vector<std::pair<std::function<size_t(const char *)>, const char *>> result = {{strlen386, "strlen386"}, {A_strlen, "A_strlen"}};
 
 	if (InstructionSet() >= 4)
 		result.push_back({strlenSSE2, "strlenSSE2"});

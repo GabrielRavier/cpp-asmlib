@@ -6,12 +6,12 @@
 
 constexpr size_t seedArraySize = 50;
 
-template <typename T> void dumpArray(std::ostream& os, T array[], size_t seedArraySize)
+template <typename T> void dumpArray(std::ostream& os, T array[], size_t arraySize)
 {
 	auto preservedFlags = os.flags();
 	os << std::hex;
 
-	for (size_t i = 0; i < seedArraySize; ++i)
+	for (size_t i = 0; i < arraySize; ++i)
 		os << "0x" << array[i] << ' ';
 
 	os.flags(preservedFlags);
@@ -60,7 +60,7 @@ int PhysicalSeedNone(int seeds[], int numSeeds);
 
 auto getAvailablePhysicalSeedFunctions()
 {
-	std::vector<std::pair<std::function<int(int *, int)>, const char *>> result = {{PhysicalSeedNone, "PhysicalSeedNone"}};
+	std::vector<std::pair<std::function<int(int *, int)>, const char *>> result = {{PhysicalSeedNone, "PhysicalSeedNone"}, {PhysicalSeed, "PhysicalSeed"}};
 
 	if (asmlibInternal::isCPUIDSupported())
 	{

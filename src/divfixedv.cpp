@@ -42,7 +42,6 @@ extern "C" __m128i dividefixedV8i16(const __m128i buf[2], __m128i x)
 	return _mm_sub_epi16(shifted, sign);
 }
 
-// The stuff for u16 doesn't work properly
 inline auto setdivisor8usInternal(uint16_t d)
 {
 	int32_t bsrResult = -1;
@@ -186,7 +185,7 @@ inline auto setdivisor4uiInternal(uint32_t d)
 	auto multiplier = _mm_shuffle_epi32(_mm_cvtsi32_si128(divResult), 0);
 
 	auto shift1 = _mm_cvtsi32_si128(bsrResult >= 1);
-	auto shift2 = _mm_cvtsi32_si128((bsrResult - 1) & (uint8_t)-(bsrResult - 1));
+	auto shift2 = _mm_cvtsi32_si128((bsrResult - 1) & (uint8_t)-(bsrResult > 1));
 	auto shifts = _mm_unpacklo_epi32(shift1, shift2);
 	return std::make_pair(_mm_unpacklo_epi64(multiplier, shifts), shifts);
 }

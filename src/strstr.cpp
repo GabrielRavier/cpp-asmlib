@@ -120,13 +120,13 @@ extern "C" char *strstrGeneric(char *haystack, const char *needle)
 	}
 }
 
-static char *strstrCPUDispatch(char *haystack, const char *needle);
+inline char *strstrCPUDispatch(char *haystack, const char *needle);
 static auto strstrDispatch = strstrCPUDispatch;
 
-static char *strstrCPUDispatch(char *haystack, const char *needle)
+inline char *strstrCPUDispatch(char *haystack, const char *needle)
 {
 	int instructionSet = InstructionSet();
-	auto result = strstrGeneric;
+	decltype(strstrDispatch) result = strstrGeneric;
 
 	if (instructionSet >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result = strstrSSE42;

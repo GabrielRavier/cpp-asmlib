@@ -1,5 +1,6 @@
 #include "asmlib.h"
 #include "asmlibran.h"
+#include "asmlib-endianness.h"
 #include <utility>
 #include <climits>
 #include <csignal>
@@ -24,8 +25,13 @@ namespace asmlibInternal
 	{
 		struct
 		{
+#if ASMLIB_LITTLE_ENDIAN
 			uint32_t low;
 			uint32_t high;
+#else
+			uint32_t high;
+			uint32_t low;
+#endif
 		};
 		uint64_t all;
 	};
@@ -34,8 +40,13 @@ namespace asmlibInternal
 	{
 		struct
 		{
-			int32_t low;
+#if ASMLIB_LITTLE_ENDIAN
+			uint32_t low;
 			int32_t high;
+#else
+			int32_t high;
+			uint32_t low;
+#endif
 		};
 		int64_t all;
 	};
@@ -213,7 +224,7 @@ namespace asmlibInternal
 		constexpr int avx2Supported = 13;
 		constexpr int fma3F16CBmi1Bmi2LzcntSupported = 14;
 		constexpr int avx512FSupported = 15;
-		constexpr int avx512BWAvx512DQAvx512VlSupported = 16;
+		constexpr int avx512BWAvx512DQAvx512VLSupported = 16;
 	}
 
 	namespace randomNumberGenerators
@@ -557,4 +568,20 @@ extern "C"
 	size_t strcspnSSE42(const char *string, const char *set);
 	__m128i dividefixedV4i32SSE2(const __m128i buf[2], __m128i x);
 	__m128i dividefixedV4i32SSE41(const __m128i buf[2], __m128i x);
+	int memcmp386(const void *ptr1, const void *ptr2, size_t size);
+	int memcmpSSE2(const void *ptr1, const void *ptr2, size_t size);
+	int memcmpAVX2(const void *ptr1, const void *ptr2, size_t size);
+	int memcmpAVX512F(const void *ptr1, const void *ptr2, size_t size);
+	int memcmpAVX512BW(const void *ptr1, const void *ptr2, size_t size);
+}
+
+// Overloaded versions of internal strstr functions
+inline const char *strstrGeneric(const char *haystack, const char *needle)
+{
+	return strstrGeneric((char *)haystack, needle);
+}
+
+inline const char *strstrSSE42(const char *haystack, const char *needle)
+{
+	return strstrSSE42((char *)haystack, needle);
 }

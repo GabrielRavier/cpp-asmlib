@@ -135,7 +135,7 @@ extern "C" int InstructionSet()
 	if (!asmlibInternal::bitTest(ebx, 17) || !asmlibInternal::bitTest(ebx, 30) || !asmlibInternal::bitTest(ebx, 31))
 		goto end;
 
-	result = asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported;
+	result = asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VLSupported;
 
 end:
 	supportedInstructionSet = result;

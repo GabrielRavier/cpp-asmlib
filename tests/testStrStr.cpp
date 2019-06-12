@@ -13,10 +13,10 @@
 
 inline auto getAvailableStrstrFunctions()
 {
-	std::vector<std::function<const char *(char *, const char *)>> result = {strstrGeneric};
+	std::vector<std::function<const char *(const char *, const char *)>> result = {(const char *(*)(const char *, const char *))strstrGeneric, (const char *(*)(const char *, const char *))A_strstr};
 
-	if (InstructionSet() >= 10)
-		result.push_back(strstrSSE42);
+	if (InstructionSet() >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
+		result.push_back((const char *(*)(const char *, const char *))strstrSSE42);
 
 	return result;
 }

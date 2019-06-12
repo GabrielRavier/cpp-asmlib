@@ -15,7 +15,7 @@
 
 inline std::vector<std::function<size_t(const char *)>> getUTF8Funcs()
 {
-	std::vector<std::function<size_t(const char *)>> result = {strcount_UTF8Generic};
+	std::vector<std::function<size_t(const char *)>> result = {strcount_UTF8Generic, strcount_UTF8};
 
 	if (InstructionSet() >= 10)
 		result.push_back(strcount_UTF8SSE42);

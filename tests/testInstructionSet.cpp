@@ -55,14 +55,14 @@ inline std::string getInstructionSetStr(int instrSet)
 		case asmlibInternal::InstructionSetReturnValues::avx512FSupported:
 			return result + "AVX512F";
 
-		case asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported:
+		case asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VLSupported:
 			return result + "AVX512BW, AVX512DQ and AVX512VL";
 
 		default:
 			if (instrSet < asmlibInternal::InstructionSetReturnValues::i386Only)
 				return "Function broken";
 
-			if (instrSet > asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VlSupported)
+			if (instrSet > asmlibInternal::InstructionSetReturnValues::avx512BWAvx512DQAvx512VLSupported)
 				return "Above AVX512BW, AVX512DQ and AVX512VL";
 	}
 
@@ -71,7 +71,7 @@ inline std::string getInstructionSetStr(int instrSet)
 
 int main()
 {
-	int instrSet = InstructionSet();
+	int instructionSet = InstructionSet();
 
-	std::cout << "Reported instruction set : " << instrSet << " (" << getInstructionSetStr(instrSet) << ")\n";
+	std::cout << "Reported instruction set : " << instructionSet << " (" << getInstructionSetStr(instructionSet) << ")\n";
 }

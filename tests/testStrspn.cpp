@@ -18,7 +18,7 @@
 
 inline auto getAvailableStrspnFunctions()
 {
-	std::vector<std::pair<std::pair<std::function<size_t(const char *, const char *)>, const char *>, std::pair<std::function<size_t(const char *, const char *)>, const char *>>> result = {{{strspnGeneric, "strspnGeneric"}, {strcspnGeneric, "strcspnGeneric"}}};
+	std::vector<std::pair<std::pair<std::function<size_t(const char *, const char *)>, const char *>, std::pair<std::function<size_t(const char *, const char *)>, const char *>>> result = {{{strspnGeneric, "strspnGeneric"}, {strcspnGeneric, "strcspnGeneric"}}, {{A_strspn, "A_strspn"}, {A_strcspn, "A_strcspn"}}};
 
 	if (InstructionSet() >= asmlibInternal::InstructionSetReturnValues::sse42Supported)
 		result.push_back({{strspnSSE42, "strspnSSE42"}, {strcspnSSE42, "strcspnSSE42"}});

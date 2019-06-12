@@ -17,7 +17,7 @@
 
 inline auto getAvailableStrToUpLowFunctions()
 {
-	std::vector<std::pair<std::function<void(char *)>, std::function<void(char *)>>> result = {{strtoupperGeneric, strtolowerGeneric}};
+	std::vector<std::pair<std::function<void(char *)>, std::function<void(char *)>>> result = {{strtoupperGeneric, strtolowerGeneric}, {A_strtoupper, A_strtolower}};
 
 	if (InstructionSet() >= 4)
 		result.push_back({strtoupperSSE42, strtolowerSSE42});

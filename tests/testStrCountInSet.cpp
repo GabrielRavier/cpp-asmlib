@@ -7,7 +7,7 @@
 
 inline std::vector<std::function<size_t(const char *, const char *)>> getAvailableStrCountInSetFunctions()
 {
-	std::vector<std::function<size_t(const char *, const char *)>> result = {strCountInSetGeneric};
+	std::vector<std::function<size_t(const char *, const char *)>> result = {strCountInSetGeneric, strCountInSet};
 
 	if (InstructionSet() >= 9)
 		result.push_back(strCountInSetSSE42);

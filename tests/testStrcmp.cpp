@@ -13,7 +13,7 @@
 
 inline auto getAvailableStrcmpFunctions()
 {
-	std::vector<std::function<int(const char *, const char *)>> result = {strcmpGeneric};
+	std::vector<std::function<int(const char *, const char *)>> result = {strcmpGeneric, A_strcmp};
 
 	if (InstructionSet() >= 10)
 		result.push_back(strcmpSSE42);

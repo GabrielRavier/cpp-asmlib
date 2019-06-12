@@ -46,8 +46,8 @@ CXXFLAGS += -Wall -Wextra
 CXXFLAGS += -MMD -MP -MF $@.d -std=c++17 -I$(INCLUDE_FOLDER)
 
 # Space-separated list of source files without extension
-SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount strcountutf8 strcountset strcmp strlen strstr strtouplow physseed strspn mother divfixedv
-TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount testStrCountUTF8 testStrCountInSet testStrcmp testStrlen testStrStr testStrToUpLow testPhysicalSeed testStrspn testMother testDivFixedV
+SOURCES = cachesize cputype debugbreak round cpuid rdtsc stricmp divfixedi procname instrset unalignedisfaster popcount strcountutf8 strcountset strcmp strlen strstr strtouplow physseed strspn mother divfixedv memcmp
+TESTS = testDataCacheSize testCpuType testDebugBreak testRound testCpuidEx testReadTSC testStricmp testDivFixedI testProcessorName testInstructionSet testPopcount testStrCountUTF8 testStrCountInSet testStrcmp testStrlen testStrStr testStrToUpLow testPhysicalSeed testStrspn testMother testDivFixedV testMemcmp
 
 OBJECTS = $(addprefix $(OBJECT_FOLDER)/$(STATIC_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))
 OBJECTS_SHARED = $(addprefix $(OBJECT_FOLDER)/$(SHARED_LIBRARY_NAME)/, $(addsuffix .o, $(SOURCES)))

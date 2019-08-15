@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <x86intrin.h>
 
-static uint32_t getByteIndex(const __m128i *sseStr)
+static inline uint32_t getByteIndex(const __m128i *sseStr)
 {
 	// Read 16 bytes from aligned pointer, then compare them with 16 0s, then get the compare result into a 32-bit integer (1 bit for each byte)
 	return _mm_movemask_epi8(_mm_cmpeq_epi8(_mm_load_si128(sseStr), _mm_setzero_si128()));
@@ -12,10 +12,10 @@ static uint32_t getByteIndex(const __m128i *sseStr)
 extern "C" size_t strlenSSE2(const char *str)
 {
 	const __m128i *sseStr = (const __m128i *)str;	// Get pointer to string
-	uintptr_t misalignment = (uintptr_t)str;	// Copy pointer
+	auto misalignment = (uint32_t)(uintptr_t)str;	// Copy pointer
 
 	misalignment &= 0xF;	// Lower 4 bits indicate misalignment
-	sseStr = (const __m128i *)((uintptr_t)sseStr & -0x10);	// Align pointer by 16
+	sseStr = (const __m128i *)((uintptr_t)sseStr & (uintptr_t)(-0x10));	// Align pointer by 16
 
 	uint32_t byteIndex = asmlibInternal::bsf((getByteIndex(sseStr) >> misalignment) << misalignment);	// Find first 1-bit, shifting out bad bits to avoid falsely reading random stuff as end of string
 
@@ -26,7 +26,7 @@ extern "C" size_t strlenSSE2(const char *str)
 	}
 
 	// Zero-byte found, compute string length
-	return ((const char *)sseStr - str) + byteIndex;	// Add byte index
+	return ((const char *)sseStr - str) + (size_t)byteIndex;	// Add byte index
 }
 
 extern "C" size_t strlen386(const char *str)
@@ -39,8 +39,7 @@ extern "C" size_t strlen386(const char *str)
 		// String is not aligned by 4, check unaligned bytes
 		u32Str = (uint32_t *)((uintptr_t)u32Str & -4);	// Align pointer by 4
 
-		uint32_t currentBytes;
-		currentBytes = (*u32Str) | ~((uint32_t) -1 << (uint8_t)(alignedPtr << 3));	// Mask out false bytes
+		uint32_t currentBytes = (*u32Str) | ~((uint32_t) -1 << (uint8_t)(alignedPtr << 3));	// Mask out false bytes
 
 		// Check first four bytes for 0
 		// currentBytes - 0x01010101 removes 1 from each byte

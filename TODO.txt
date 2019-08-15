@@ -1,13 +1,12 @@
 A_strcpy: A_memcpy
 A_strcat: A_memcpy
 A_substring: A_memcpy
+MakeStrlenWork:
 MakeStaticFunctionsInline:
 AddFunctionNamesToTests:
 AddMultiVersionTestsToMother:
 ReviseVariableNames:
-MakeMemcmpWork:
 PutLessThingsInMain: PutMostOfMainInTestFunc UseGetAvailableFunctionsAsArgumentToSeperateFunction
-A_memcmp:
 A_memset:
 mersenne:
 sfmt:

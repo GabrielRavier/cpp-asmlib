@@ -301,10 +301,10 @@ extern "C" int memcmpSSE2(const void *ptr1, const void *ptr2, size_t size)
 	if (ssize <= -2)
 	{
 		uint16_t ax = *(const uint16_t *)(ptr18 + ssize) - *(const uint16_t *)(ptr28 + ssize);
-		if (!ax)
+		if (ax)
 		{
 			// Difference in byte 0 or 1
-			if (!(uint8_t)ax)
+			if (!(ax & 0xFF))
 				++ssize;
 
 			return ptr18[ssize] - ptr28[ssize];
@@ -316,7 +316,7 @@ extern "C" int memcmpSSE2(const void *ptr1, const void *ptr2, size_t size)
 	}
 
 	// Less than 2 bytes left
-	if (!ssize)
+	if (ssize)
 		return ptr18[ssize] - ptr28[ssize];
 
 	return 0;

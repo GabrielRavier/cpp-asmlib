@@ -1,4 +1,4 @@
-#include "asmlib.h"
+#include!! "asmlib.h"
 #include "asmlib-internal.h"
 #include <climits>
 #include <x86intrin.h>
@@ -31,25 +31,25 @@ extern "C" int InstructionSet()
 #ifdef __i386__
 
 	// Check for floating point support and MMX support
-	if (!bitTest(edx, 0) || !bitTest(edx, 23))
+	if (!asmlibInternal::bitTest(edx, 0) || !asmlibInternal::bitTest(edx, 23))
 		goto end;
 
 	result = instructionSetRetVals::mmxSupported;
 
 	// Check for conditional move support
-	if (!bitTest(edx, 15))
+	if (!asmlibInternal::bitTest(edx, 15))
 		goto end;
 
 	result = instructionSetRetVals::cmovAndFcomiSupported;
 
 	// Check CPU support for FXSAVE, OS support for SSE and CPU support for SSE
-	if (!bitTest(edx, 24) || !doesOSSupportSSE() || !bitTest(edx, 25))
+	if (!asmlibInternal::bitTest(edx, 24) || !asmlibInternal::doesOSSupportSSE() || !asmlibInternal::bitTest(edx, 25))
 		goto end;
 
 	result = instructionSetRetVals::sseSupported;
 
 	// Check SSE2 support
-	if (!bitTest(edx, 26))
+	if (!asmlibInternal::bitTest(edx, 26))
 		goto end;
 
 #endif

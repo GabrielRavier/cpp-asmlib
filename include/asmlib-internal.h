@@ -60,26 +60,11 @@ namespace asmlibInternal
 	inline bool isCPUIDSupported()
 	{
 #if __i386__
-		int cpuidSupported;
-
-		__asm("  pushfl\n"
-		"  popl   %%eax\n"
-		"  movl   %%eax,%%ecx\n"
-		"  xorl   $0x00200000,%%eax\n"
-		"  pushl  %%eax\n"
-		"  popfl\n"
-		"  pushfl\n"
-		"  popl   %%eax\n"
-		"  movl   $0,%0\n"
-		"  cmpl   %%eax,%%ecx\n"
-		"  je     1f\n"
-		"  cmpl   %%eax,%%ecx\n"
-		"  movl   $1,%0\n"
-		"1:"
-		: "=r" (cpuidSupported) : : "eax", "ecx");
-		if (!cpuidSupported)
-			return false;
-		return true;
+		auto eflagsBeforeWrite = __readeflags();	// Get current EFLAGS
+		auto eflagsWritten = eflagsBeforeWrite ^= 0x200000;
+		__writeeflags(eflagsWritten);	// Try to flip ID flag in EFLAGS
+		auto eflagsAfterWrite = __readeflags();	// Get EFLAGS after write
+		return eflagsAfterWrite != eflagsBeforeWrite;	// If we could flip the ID bit, CPUID is supported
 #else
 		// x86-64
 		return true;

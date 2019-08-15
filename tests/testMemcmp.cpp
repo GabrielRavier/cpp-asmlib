@@ -18,10 +18,15 @@ template <typename T> void dumpArray(std::ostream& os, T array[], size_t arraySi
 	os.flags(preservedFlags);
 }
 
-[[noreturn]] inline void memcmpError(const void *ptr1, const void *ptr2, size_t size, const char *functionName)
+[[noreturn]] inline void memcmpError(const void *ptr1, const void *ptr2, size_t size, const char *functionName, int correctResult, int falseResult)
 {
+	auto preservedFlags = std::cerr.flags();
 	std::cerr << std::hex;
 	std::cerr << "ERROR : Failed to compare arrays ptr1 (0x" << (uintptr_t)ptr1 << ") and ptr2 (0x" << (uintptr_t)ptr2 << ") of size 0x" << size << " !\n"
+	"\n";
+	std::cerr.flags(preservedFlags);
+
+	std::cerr << "Got " << falseResult << " when " << correctResult << " was expected !\n"
 	"\n"
 	"ptr1 : ";
 	dumpArray(std::cerr, (const uint8_t *)ptr1, size);
@@ -31,7 +36,7 @@ template <typename T> void dumpArray(std::ostream& os, T array[], size_t arraySi
 	dumpArray(std::cerr, (const uint8_t *)ptr2, size);
 	std::cerr << "\n"
 	"\n"
-	"Function used : " << functionName;
+	"Function used : " << functionName << '\n';
 
 	std::exit(1);
 }
@@ -77,7 +82,7 @@ int main()
 				auto testResult = function.first(ptr1.first, ptr2.first, size);
 
 				if (correctResult != testResult)
-					memcmpError(ptr1.first, ptr2.first, size, function.second);
+					memcmpError(ptr1.first, ptr2.first, size, function.second, correctResult, testResult);
 			}
 	}
 

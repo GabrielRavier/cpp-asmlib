@@ -86,12 +86,12 @@ namespace asmlibInternal
 #endif
 	}
 
-	inline int32_t bsf(int32_t x)
+	inline uint32_t bsf(uint32_t x)
 	{
 		return __builtin_ctz(x);
 	}
 
-	inline int32_t bsr(int32_t x)
+	inline uint32_t bsr(uint32_t x)
 	{
 		return 31 - __builtin_clz(x);
 	}

@@ -8,6 +8,7 @@ inline int memcmpAVX512BWInternalSize0To40(const void *ptr1, const void *ptr2, s
 inline int memcmpAVX512BWInternalSize0To40(const void *ptr1, const void *ptr2, size_t size)
 {
 	auto countPart1 = _cvtu32_mask32(_bzhi_u32(-1, size));
+
 	if (size < 0x20)
 		size = 0;
 	else
@@ -235,7 +236,7 @@ extern "C" int memcmpSSE2(const void *ptr1, const void *ptr2, size_t size)
 {
 	auto ptr18 = (const uint8_t *)ptr1;
 	auto ptr28 = (const uint8_t *)ptr2;
-	ssize_t ssize = size;
+	ssize_t ssize = (ssize_t)size;
 	ptr18 += ssize;	// Use negative index from end of memory block
 	ptr28 += ssize;
 
@@ -255,7 +256,7 @@ extern "C" int memcmpSSE2(const void *ptr1, const void *ptr2, size_t size)
 			return ptr18[ssize] - ptr28[ssize];
 		}
 
-		ssize += 16;
+		ssize += 0x10;
 		if (!ssize)
 			return 0;
 	}

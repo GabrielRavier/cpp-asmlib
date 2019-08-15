@@ -4,7 +4,7 @@ inline int memcmpAVX512InternalDifferenceFound(__m512i currentPtr1Bytes, __m512i
 
 inline int memcmpAVX512Internal(const void *ptr1, const void *ptr2, size_t size) __attribute__((target("avx512f")));
 
-inline int memcmpAVX512BWInternalSize0To40(const void *ptr1, const void *ptr2, size_t size) __attribute__((target("avx512f"), target("avx512bw"), target("bmi2")));
+inline int memcmpAVX512BWInternalSize0To40(const void *ptr1, const void *ptr2, size_t size) __attribute__((target("avx512f,avx512bw,bmi2")));
 inline int memcmpAVX512BWInternalSize0To40(const void *ptr1, const void *ptr2, size_t size)
 {
 	auto countPart1 = _cvtu32_mask32(_bzhi_u32(-1, size));
